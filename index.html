@@ -1,0 +1,3215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The SeedSigner Manifesto — Independent Custody Guide</title>
+    <meta
+      name="description"
+      content="A scrolling edition of the SeedSigner Independent Custody Guide: why multisig, where the stateless airgapped signer came from, the objections against it, and a full 2-of-3 wallet walkthrough. All text and images from the SeedSigner project's MIT-licensed guide."
+    />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0a0d10" />
+    <link rel="canonical" href="https://seedsigner.beunruggable.com/" />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="The SeedSigner Manifesto" />
+    <meta
+      property="og:title"
+      content="The SeedSigner Manifesto — Independent Custody Guide"
+    />
+    <meta
+      property="og:description"
+      content="A ~$70 signing device that forgets your keys the moment you unplug it — and the reasoning behind every design decision."
+    />
+    <meta property="og:url" content="https://seedsigner.beunruggable.com/" />
+    <meta
+      property="og:image"
+      content="https://seedsigner.beunruggable.com/images/flagship.jpg"
+    />
+    <meta
+      property="og:image:alt"
+      content="A finished SeedSigner signing device in a 3D-printed enclosure."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:image"
+      content="https://seedsigner.beunruggable.com/images/flagship.jpg"
+    />
+
+    <link rel="icon" href="favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#ch01">Skip to the guide</a>
+
+    <div class="progress" aria-hidden="true"><i></i></div>
+
+    <button class="theme" type="button" aria-label="Switch colour theme">
+      Light
+    </button>
+
+    <nav class="rail" aria-label="Contents">
+      <button
+        class="rail-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="rail-list"
+        aria-label="Chapter contents"
+      >
+        <span class="rail-toggle-now">Contents</span>
+        <span class="rail-toggle-mark" aria-hidden="true"></span>
+      </button>
+      <p class="rail-head">Contents</p>
+      <ol id="rail-list">
+        <li>
+          <a href="#ch01"><span>01</span><span>Three epochs</span></a>
+        </li>
+        <li>
+          <a href="#ch02"><span>02</span><span>Your own keys</span></a>
+        </li>
+        <li>
+          <a href="#ch03"><span>03</span><span>The board</span></a>
+        </li>
+        <li>
+          <a href="#ch04"><span>04</span><span>Where it came from</span></a>
+        </li>
+        <li>
+          <a href="#ch05"><span>05</span><span>The objections</span></a>
+        </li>
+        <li>
+          <a href="#ch06"><span>06</span><span>What it does</span></a>
+        </li>
+        <li>
+          <a href="#ch07"><span>07</span><span>Three parts</span></a>
+        </li>
+        <li>
+          <a href="#ch08"><span>08</span><span>Practice first</span></a>
+        </li>
+        <li>
+          <a href="#ch09"><span>09</span><span>The walkthrough</span></a>
+        </li>
+        <li>
+          <a href="#ch10"><span>10</span><span>Variables</span></a>
+        </li>
+        <li>
+          <a href="#ch11"><span>11</span><span>Sources</span></a>
+        </li>
+      </ol>
+      <a class="rail-top" href="#top">↑ Back to top</a>
+    </nav>
+
+    <!-- ==================================================== hero ======== -->
+
+    <header class="hero" id="top">
+      <div class="col">
+        <div class="hero-mark">
+          <picture>
+            <source srcset="images/seedsigner_logo.webp" type="image/webp" />
+            <img
+            src="images/seedsigner_logo.png"
+            alt="The SeedSigner project logo"
+            width="150"
+          />
+          </picture>
+          <p>
+            Independent Custody Guide<br />
+            Written &amp; published by the SeedSigner project<br />
+            MIT licensed · presented here as one continuous read
+          </p>
+        </div>
+
+        <h1>The SeedSigner Manifesto</h1>
+
+        <p class="hero-deck">
+          SeedSigner is a Bitcoin signing device you build yourself from three
+          general-purpose parts for around $70. No USB data port. No WiFi or
+          Bluetooth radio. No memory of your private keys after the power comes
+          off. Its own custody guide is part manifesto and part step-by-step
+          2-of-3 multisig walkthrough — and it spends most of its length
+          explaining <em>why</em>, not just how.
+        </p>
+
+        <ul class="hero-stats">
+          <li><b>~$70</b> bill of materials</li>
+          <li><b>0</b> radios</li>
+          <li><b>0</b> secrets stored</li>
+          <li><b>3</b> core parts</li>
+          <li><b>2-of-3</b> worked example</li>
+        </ul>
+
+        <p class="hero-meta">
+          11 chapters · ~40 min read · 50 exhibits
+        </p>
+
+        <div class="hero-cta">
+          <a class="btn btn-key" href="#ch01">Start reading</a>
+          <a
+            class="btn"
+            href="https://github.com/SeedSigner/independent_custody_guide"
+            rel="noopener"
+            >Read the original guide</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main class="flow">
+      <!-- ============================================ editorial dateline -->
+
+      <aside class="dateline">
+        <div class="col">
+          <p class="label">Editor's note — not part of the guide</p>
+          <div class="dateline-body">
+            <p>
+              The guide is a living document, but this edition is a snapshot of
+              it, and the guide's own text dates from 2022. The reasoning below
+              has aged well; a few specifics have not. Before you follow any
+              step literally, check these against the project's current
+              releases:
+            </p>
+            <ul class="marks marks-dot">
+              <li>
+                <strong>The test network moved on.</strong> Chapter 08 uses
+                testnet3, which has since been superseded by testnet4. The
+                <code>-n testnet</code> flag, the server list and the faucet
+                link are reproduced as the guide has them — verify the current
+                flag and a working faucet in Sparrow's and SeedSigner's own docs
+                before relying on them.
+              </li>
+              <li>
+                <strong>SeedSigner has had many releases since.</strong> The
+                guide refers to version 0.4.5. There have been several major
+                versions and an interface redesign since — which is why some
+                screenshots here show an older UI than others. Menu wording and
+                the exact key sequences may differ from your device.
+              </li>
+              <li>
+                <strong>Hardware got scarcer, and prices went up.</strong> The
+                Pi Zero v1.3's scarcity is discussed in chapter 07. The dollar
+                figures inside the guide are 2022 prices — a bill of materials
+                of roughly $35, a display at $15 or less, a camera at $10 or
+                less — and they are left here exactly as the guide wrote them. A
+                build today runs closer to $70, which is the figure quoted at
+                the top of this page. Current recommended boards, cameras and
+                enclosures are best checked in the project repository rather
+                than here.
+              </li>
+            </ul>
+            <p>
+              Everything else — the threat modelling, the design reasoning, the
+              objections and the trade-offs — is the point of the document, and
+              none of it has expired.
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ================================================ 01 epochs ==== -->
+
+      <section class="chapter" id="ch01">
+        <div class="col stack">
+          <div>
+            <p class="eyebrow">
+              <span class="num">01</span> <span>Prologue</span>
+              <a
+                class="src"
+                href="https://github.com/SeedSigner/independent_custody_guide#readme"
+                rel="noopener"
+                >source ↗</a
+              >
+            </p>
+            <h2>Why “manifesto” is the right word.</h2>
+            <div class="prose">
+              <p class="lede">
+                The argument starts with a piece of history. Look at the long
+                arc of Bitcoin custody and you can divide it into three epochs,
+                each one made possible by a specific technical standard, and
+                each one moving a little more control toward the person holding
+                the coins.
+              </p>
+            </div>
+          </div>
+
+          <div class="epochs">
+            <div class="epoch">
+              <span class="roman">I</span>
+              <h3>Core and paper wallets</h3>
+              <span class="years">The earliest way to store bitcoin</span>
+              <p>
+                Bitcoin Core was of course the first place coins lived. Paper
+                wallets represent the early creative attempts at storage with
+                better security assurances — printed key pairs, generated
+                offline, held as physical objects.
+              </p>
+            </div>
+            <div class="epoch">
+              <span class="roman">II</span>
+              <h3>The hardware wallet era</h3>
+              <span class="years">Enabled by HD wallets &amp; BIP39</span>
+              <p>
+                Proprietary, USB-connected, secure-element-equipped devices. A
+                genuine leap in custodial security — but with significant
+                compromises, several of which amount to varying degrees of
+                reliance on third parties.
+              </p>
+            </div>
+            <div class="epoch epoch-now">
+              <span class="roman">III</span>
+              <h3>Stateless, transparently airgapped signers</h3>
+              <span class="years">Enabled by PSBT &amp; multisig standards</span>
+              <p>
+                Ushered in by the partially signed Bitcoin transaction standard
+                and the refinement of multisig. The work of this epoch is
+                widening the separation between the software that talks to the
+                Bitcoin protocol and the software that touches private keys.
+              </p>
+            </div>
+          </div>
+
+          <figure class="fig reveal">
+            <div class="plate">
+              <picture>
+                <source srcset="images/era_3.webp" type="image/webp" />
+                <img
+                src="images/era_3.png"
+                alt="The guide's diagram of the third custody epoch"
+                loading="lazy"
+              />
+              </picture>
+            </div>
+            <figcaption>
+              <span class="ex">EX 01</span>
+              <span
+                >The third epoch, as the guide draws it. SeedSigner's bet is
+                that stateless signing devices using transparently airgapped
+                communication — QR exchange rather than NFC — with a focus on
+                making multisig usable, become emblematic of this era.</span
+              >
+            </figcaption>
+          </figure>
+
+          <div class="split">
+            <blockquote class="pull">
+              <p>
+                “With the right mix of design inputs, users can have access to
+                simple, user-friendly bitcoin self-custody, with solid security
+                assurances, using inexpensive, discreetly-acquired hardware,
+                &amp; FOSS code.”
+              </p>
+              <cite>The guide's thesis, in its own words</cite>
+            </blockquote>
+            <div class="prose">
+              <p>
+                There is a second claim folded into that sentence. A do-it-yourself
+                device built from general-purpose hardware and free, open-source
+                code shifts control away from the sellers of purpose-built
+                proprietary hardware wallets, and puts it back in the hands of
+                the people using it.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================ 02 keys ====== -->
+
+      <section class="chapter chapter-alt" id="ch02">
+        <div class="col stack">
+          <div>
+            <p class="eyebrow">
+              <span class="num">02</span> <span>Introduction</span>
+              <a
+                class="src"
+                href="https://github.com/SeedSigner/independent_custody_guide#introduction"
+                rel="noopener"
+                >source ↗</a
+              >
+            </p>
+            <h2>Holding your own keys is not a virtue-signalling exercise.</h2>
+            <div class="prose">
+              <p class="lede">
+                Most bitcoiners already accept the premise — as a digital bearer
+                asset, personal custody is a huge part of the ethos. But the
+                guide is careful to spell out what self-custody actually
+                <em>does</em> for you, because the reasons are not
+                interchangeable.
+              </p>
+            </div>
+          </div>
+
+          <ul class="marks marks-dot">
+            <li>
+              Protects owners from loss of funds due to custodial service thefts
+              or rugpulls
+            </li>
+            <li>
+              Allows you to send bitcoin to any recipient without needing
+              permission <strong>from anyone</strong>
+            </li>
+            <li>Is foundational to privacy-conscious bitcoin usage</li>
+            <li>
+              Protects bitcoin as a financial asset from rehypothecation and
+              other forms of value dilution
+            </li>
+            <li>
+              Helps users understand the network's technical fundamentals — when
+              done properly
+            </li>
+          </ul>
+
+          <div class="prose">
+            <p>
+              Securing your assets is the reason that motivates nearly everyone:
+              where your money goes, your mind follows. But for many people
+              earnestly trying to reach the self-custody finish line, things get
+              in the way. Life happens. A lot of it comes down to uncertainty
+              and analysis paralysis. What hardware do I need? Which software is
+              best? Where do backups go? Which security trade-offs make sense
+              for me?
+            </p>
+            <p>
+              The guide's response is to prune the decision tree on purpose. It
+              picks a framework, minimises the number of branches, and then
+              tries to justify each choice as it goes. That is also why the
+              early sections read more like an essay than a manual — the author
+              set out to write a step-oriented document and found the questions
+              of “why” and “how” kept coming back.
+            </p>
+          </div>
+
+          <blockquote class="pull">
+            <p>
+              “If people don't understand the ‘why’ behind their actions,
+              they're not going to have a high degree of confidence in, or
+              conviction about, what they're doing.”
+            </p>
+            <cite>And confidence is most of the job</cite>
+          </blockquote>
+
+          <div class="ledger">
+            <div>
+              <h3>What the guide assumes about you</h3>
+              <ul class="marks marks-dot">
+                <li>
+                  You understand the basic mechanics of sending and receiving
+                  bitcoin
+                </li>
+                <li>
+                  You are securing what is — or you expect to become — a
+                  significant amount of value
+                </li>
+                <li>
+                  You will spend a reasonable amount of time and energy building
+                  a system
+                </li>
+                <li>
+                  You will spend at a bare minimum around $100 on hardware and
+                  supplies
+                </li>
+                <li>
+                  You have access to at least two remote, secure locations for
+                  key storage
+                </li>
+                <li>You are comfortable with SeedSigner's security model</li>
+              </ul>
+            </div>
+            <div>
+              <h3>What you'll need on the table</h3>
+              <ul class="marks marks-plus">
+                <li>
+                  A webcam-equipped computer running
+                  <a href="https://sparrowwallet.com" rel="noopener"
+                    >Sparrow Wallet</a
+                  >
+                </li>
+                <li>
+                  An assembled
+                  <a href="https://seedsigner.com" rel="noopener">SeedSigner</a>
+                  signing device
+                </li>
+                <li>A printer with paper</li>
+                <li>
+                  Some sort of metal backup solution — optional, but strongly
+                  recommended
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <details class="aside">
+            <summary>Sidebar: why Sparrow for this guide?</summary>
+            <div class="aside-body">
+              <p>
+                Sparrow runs on all three desktop platforms and is best
+                described as a wallet <em>coordinator</em>: you can use it for
+                single-signature wallets, but its real value is taking several
+                private keys and coordinating them into one multisig wallet. It
+                expects an internet connection and manages your wallet's
+                interaction with the protocol.
+              </p>
+              <p>
+                <a href="https://specter.solutions" rel="noopener"
+                  >Specter Desktop</a
+                >
+                does much the same job. (Side note: the Specter team also created
+                <a
+                  href="https://github.com/cryptoadvance/specter-diy"
+                  rel="noopener"
+                  >Specter-DIY</a
+                >, the airgapped DIY signer that was a big part of SeedSigner's
+                inspiration — it comes back in chapter 04.) Specter Desktop
+                generally expects you to run a full node, either purpose-built or
+                as an instance of
+                <a
+                  href="https://github.com/bitcoin/bitcoin/releases"
+                  rel="noopener"
+                  >Bitcoin Core</a
+                >
+                on the same machine. Running a node is unarguably more secure and
+                more private, and the guide's author thinks most bitcoiners
+                should do it or aspire to — but did not want it to be a
+                deal-breaking requirement here.
+              </p>
+              <p>
+                <a href="https://bluewallet.io" rel="noopener">BlueWallet</a> is
+                mobile-first, which matters enormously in the many parts of the
+                world where a phone is how people reach both bitcoin and the
+                internet. Its Achilles heel for this guide specifically: no
+                testnet support, and chapter 08 leans hard on testnet. Since the
+                guide was written,
+                <a href="https://nunchuk.io" rel="noopener">Nunchuk</a> and
+                <a href="https://bitcoinkeeper.app" rel="noopener">Keeper</a>
+                have also arrived as SeedSigner-compatible mobile coordinators.
+              </p>
+              <p>
+                The bottom line: all of these work. Sparrow was chosen to keep
+                the instructions from getting overwhelming.
+              </p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- ================================================ 03 board ===== -->
+
+      <section class="chapter" id="ch03">
+        <div class="col stack">
+          <div>
+            <p class="eyebrow">
+              <span class="num">03</span> <span>Why multisig</span>
+              <a
+                class="src"
+                href="https://github.com/SeedSigner/independent_custody_guide#why-multi-signature-wallets"
+                rel="noopener"
+                >source ↗</a
+              >
+            </p>
+            <h2>Think of it as a board, and your coins as the treasury.</h2>
+            <div class="prose">
+              <p class="lede">
+                Multisig has a bad reputation, and the guide argues the reputation
+                is a historical accident. When the concept gained traction years
+                ago the hype was real, but proper tools took a long time to
+                arrive — and by the time they did, the hype had died down. What
+                stuck was the impression that multisig is a niche option for
+                sufficiently technical people.
+              </p>
+              <p>
+                One of the guide's stated goals is to discard that notion
+                entirely. If a multisig wallet is too complex for most
+                bitcoiners to use in practice, that is the fault of the wallet's
+                creators, who need to return to the drawing board.
+              </p>
+              <p>
+                The most approachable framing: a multisig wallet is a kind of
+                corporate board — in technical speak, a “quorum”. Your funds are
+                the board's treasury. They move only with the approval of a
+                certain number of board members, the “cosigners”. The chartering
+                documents drawn up when the board was created — the “multisig
+                policy” — dictate how many votes it takes. Usually that is a
+                majority: think 3-of-5.
+              </p>
+              <p>
+                A board that let a single member move funds alone would not make
+                much sense. A board that required <em>every</em> member to
+                approve would be difficult to manage. Like most analogies this
+                one breaks down as you go deeper, but it is a good place to
+                start.
+              </p>
+            </div>
+          </div>
+
+          <div class="ledger">
+            <div>
+              <h3>Advantages</h3>
+              <ul class="marks marks-plus">
+                <li>
+                  Introduces fault tolerance — no more single point of failure
+                </li>
+                <li>
+                  Allows physical, geographic distribution of the keys in a
+                  wallet
+                </li>
+                <li>
+                  Facilitates distributing custody among multiple, disparate
+                  parties
+                </li>
+                <li>
+                  Allows different hardware and software security models among
+                  cosigners
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3>Disadvantages</h3>
+              <ul class="marks marks-minus">
+                <li>
+                  Increased technical complexity that could result in loss of
+                  funds
+                </li>
+                <li>
+                  Increased volume of information that needs to be stored and
+                  maintained
+                </li>
+                <li>
+                  Users making multiple mistakes could still result in loss of
+                  funds
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="prose">
+              <h3 class="sub">The insight worth sitting with</h3>
+              <p>
+                With a single-signature wallet, the standard defence against
+                <em>losing</em> a key is to keep a second copy of the secret,
+                usually somewhere remote with an emphasis on physical security —
+                because the first copy is protected by technology instead: a
+                secure element, a PIN.
+              </p>
+              <p>
+                But the mere existence of that second copy ironically raises the
+                risk of the key being not lost but
+                <strong>disclosed</strong> — think a rogue bank employee snooping
+                in safe deposit boxes, or a targeted attack on your
+                “remote-but-secure” location. You halved one risk and doubled
+                another.
+              </p>
+              <p>
+                The core advantage of multisig is that it creates a situation
+                where losing a secret <strong>or</strong> disclosing one does not
+                necessarily mean catastrophe. The guide's position is that this
+                fault tolerance outweighs the added complexity and information
+                management, especially for a substantial amount of value — and it
+                says plainly that others are welcome to weigh the trade-offs
+                differently.
+              </p>
+            </div>
+            <figure class="fig fig-narrow reveal">
+              <div class="plate">
+                <picture>
+                  <source srcset="images/keys.webp" type="image/webp" />
+                  <img
+                  src="images/keys.jpg"
+                  alt="A set of keys, used in the guide to illustrate distributed custody"
+                  loading="lazy"
+                />
+                </picture>
+              </div>
+              <figcaption>
+                <span class="ex">EX 02</span>
+                <span
+                  >Several keys, several locations, no single point of
+                  failure.</span
+                >
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================ 04 origin ==== -->
+
+      <section class="chapter chapter-alt" id="ch04">
+        <div class="col stack">
+          <div>
+            <p class="eyebrow">
+              <span class="num">04</span> <span>Where it came from</span>
+              <a
+                class="src"
+                href="https://github.com/SeedSigner/independent_custody_guide#whats-the-story-with-this-seedsigner-thing-anyway"
+                rel="noopener"
+                >source ↗</a
+              >
+            </p>
+            <h2>
+              A cheapskate, a forensics lab, and a $35 device that remembers
+              nothing.
+            </h2>
+            <div class="prose">
+              <p class="lede">
+                The guide's author did not originally intend to tell this story.
+                It went in because the device's odd characteristics only make
+                sense once you know which problem each one was solving. Nearly
+                every distinctive design decision in SeedSigner traces back to a
+                practice borrowed from digital forensics.
+              </p>
+              <p>
+                It starts with a confession: convinced that multisig's benefits
+                outweighed its costs, but frugal — “or put more bluntly, a
+                cheapskate.” Spending $500 or more on hardware wallets was
+                unappealing. The guide is candid that this instinct is a mistake;
+                depending on the value you are protecting, it absolutely makes
+                sense to spend a reasonable proportion of it on safeguards. But
+                the inner cheapskate was convinced there had to be a way to run
+                multisig without buying several devices.
+              </p>
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="prose">
+              <h3 class="sub">Enter Specter-DIY</h3>
+              <p>
+                A do-it-yourself Bitcoin wallet made from easily acquirable
+                electronic components. The most interesting part was how it
+                moved data: animated QR code sets carried a proposed transaction
+                from the coordinator software to the DIY device where the private
+                key lived, and then carried the approved version back — again by
+                QR.
+              </p>
+              <p>
+                To someone with a background in digital forensics, this made
+                immediate sense. The private key stayed on hardware physically
+                separate from the coordinator, with only a very narrow
+                QR-exchange channel between them instead of a USB connection.
+                Elegant, and relatively simple.
+              </p>
+            </div>
+            <figure class="fig fig-narrow reveal">
+              <div class="plate">
+                <picture>
+                  <source srcset="images/specter_diy.webp" type="image/webp" />
+                  <img
+                  src="images/specter_diy.jpg"
+                  alt="A Specter-DIY airgapped signing device"
+                  loading="lazy"
+                />
+                </picture>
+              </div>
+              <figcaption>
+                <span class="ex">EX 03</span>
+                <span
+                  >Specter-DIY — the airgapped DIY signer that started the
+                  chain of thought.</span
+                >
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="split">
+            <blockquote class="pull">
+              <p>
+                “When you connect two electronic devices, ‘things can happen’
+                that involve either the transfer of data, or the creation of new
+                data, as a result of the connection.”
+              </p>
+              <cite>Locard's exchange principle, applied to computers</cite>
+            </blockquote>
+            <div class="prose">
+              <p>
+                Criminal forensics rests on Locard's exchange principle: when two
+                items make physical contact, microscopic material passes between
+                them and remains as evidence of the contact. Loosely applied to
+                digital forensics, connecting two devices is never a neutral act.
+                Practitioners take great care over when and how evidentiary
+                devices are allowed to touch collection devices, and they
+                document and explain the results.
+              </p>
+              <p>
+                Read the QR-exchange protocol again with that in mind and it
+                stops looking like an inconvenience.
+              </p>
+            </div>
+          </div>
+
+          <div class="prose">
+            <h3 class="sub">Then: a Raspberry Pi with no radios</h3>
+            <p>
+              Interest in Specter-DIY led to casual conversations with the
+              Specter team and with security researcher Michael Flaxman, author
+              of the
+              <a href="https://btcguide.github.io/" rel="noopener"
+                >10x Bitcoin Security Guide</a
+              >. Flaxman had put out a public call for an enclosure for the DIY;
+              the guide's author, having tinkered with 3D printing and CAD, took
+              a shot at one.
+            </p>
+            <p>
+              In the course of that, Flaxman shared an idea for a simple device
+              pairing a Raspberry Pi Zero with a display-plus-controls module.
+              You would enter the seed words you had randomly selected from the
+              BIP39 list, and the device would calculate the final word — the
+              checksum that guards against transcription errors in the words
+              before it.
+            </p>
+            <p>
+              The beautiful part was the specific hardware: the Pi Zero
+              <strong>version 1.3</strong>, which does not physically include the
+              components needed for WiFi or Bluetooth.
+            </p>
+            <p>
+              That detail landed because it mirrored lab practice. In mobile
+              forensics, radio isolation — Faraday enclosures, after Michael
+              Faraday — keeps a device under examination off wireless networks
+              and away from other devices. It stops incoming data from changing
+              the device, the worst case being a “death from above” remote wipe,
+              and it allows a controlled examination against a static data set.
+              The author's own lab also ran an internal, deliberately offline
+              network: evidence could move between machines inside the lab, but
+              nothing could travel beyond it. No private data out, no
+              undesirable data in.
+            </p>
+            <p>
+              A computer with no means of wireless communication enforces exactly
+              that isolation, in a “can't be evil” way. Components were ordered,
+              rudimentary coding skills were applied, and without too much
+              trouble a proof of concept appeared: enter 23 BIP39 words, and a
+              Python Bitcoin library called Embit — credited to Stepan Snigirev
+              of Specter — generates the correct checksum word to complete a
+              proper seed phrase.
+            </p>
+          </div>
+
+          <figure class="fig reveal">
+            <div class="plate">
+              <picture>
+                <source srcset="images/early_seedsigner.webp" type="image/webp" />
+                <img
+                src="images/early_seedsigner.jpg"
+                alt="An early SeedSigner prototype: a Raspberry Pi Zero with a display and controls hat"
+                loading="lazy"
+              />
+              </picture>
+            </div>
+            <figcaption>
+              <span class="ex">EX 04</span>
+              <span
+                >The early prototype. A dice-to-seed module came next, turning 99
+                rolls into a 24-word phrase — and then a cheap Pi-compatible
+                camera raised a bigger question.</span
+              >
+            </figcaption>
+          </figure>
+
+          <div class="prose">
+            <h3 class="sub">
+              The question that produced the most important design decision
+            </h3>
+            <p>
+              With an inexpensive camera added, the core airgapped
+              transaction-signing trick of the Specter-DIY could be replicated.
+              After some stackoverflow-intensive research, the QR-exchange
+              signing process worked, and the full concept of SeedSigner existed.
+            </p>
+            <p>
+              One problem remained. Would you really want this little device to
+              remember your private keys? With no secure enclave anywhere in the
+              Raspberry Pi platform to give any assurance a key was stored
+              safely, the answer was a resounding no.
+            </p>
+            <p>
+              The solution came from the forensics lab again. To acquire data
+              from hard drives defensibly, examiners use Linux-based “live”
+              operating systems: you power on the evidentiary computer, attach a
+              collection drive, and use a bad guy's own machine to acquire its
+              own storage. The defining property of these tools is that they run
+              <em>entirely in memory</em>, so once you power the system off, no
+              persistent residual data from the acquisition is left behind. RAM
+              is volatile; remove power and the contents are permanently gone.
+            </p>
+            <p>
+              If the signing device were engineered explicitly
+              <strong>not</strong> to remember private keys — using them only as
+              Python variables in active memory — the problem of storing a key
+              securely on it disappears rather than gets solved. And a device
+              that stores nothing can safely be used with
+              <em>many</em> keys, which removes the need for a dedicated piece of
+              hardware per cosigner. The inner cheapskate got its answer.
+            </p>
+          </div>
+
+          <div class="fig-row">
+            <figure class="fig reveal">
+              <div class="plate">
+                <picture>
+                  <source srcset="images/seedsigner_components.webp" type="image/webp" />
+                  <img
+                  src="images/seedsigner_components.jpg"
+                  alt="The three SeedSigner components laid out: Raspberry Pi Zero, display hat and camera"
+                  loading="lazy"
+                />
+                </picture>
+              </div>
+              <figcaption>
+                <span class="ex">EX 05</span>
+                <span
+                  >Bill of materials for a physically disconnected,
+                  wireless-incapable, amnesiac device: roughly $35.</span
+                >
+              </figcaption>
+            </figure>
+            <figure class="fig reveal">
+              <div class="plate">
+                <picture>
+                  <source srcset="images/seedsigner_reimport.webp" type="image/webp" />
+                  <img
+                  src="images/seedsigner_reimport.jpg"
+                  alt="Four SeedSigner screens: the Home menu, the Load A Seed menu, the camera viewfinder, and the Finalize Seed screen showing a key fingerprint"
+                  loading="lazy"
+                />
+                </picture>
+              </div>
+              <figcaption>
+                <span class="ex">EX 06</span>
+                <span
+                  >Statelessness in practice: every session starts from an empty
+                  Home menu, and a key gets loaded in fresh — by SeedQR scan or
+                  by typing the words.</span
+                >
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="prose">
+            <h3 class="sub">And one advantage nobody designed for</h3>
+            <p>
+              As the idea got shared around, a privacy argument surfaced. A
+              SeedSigner is not built from any component that most people would
+              recognise as bitcoin-specific. You can acquire the parts without
+              signalling to a merchant — or anyone else — that you intend to
+              build a signing device or interact with the Bitcoin network. For
+              people with strong privacy concerns, that is highly desirable. For
+              people living where bitcoin use is discouraged or outright banned,
+              and sourcing a hardware wallet is difficult and conspicuous, it can
+              be the difference between saving in bitcoin and not.
+            </p>
+          </div>
+
+          <ul class="marks marks-plus">
+            <li>
+              Operation in isolation — no USB, WiFi or Bluetooth — dramatically
+              reduces attack vectors
+            </li>
+            <li>
+              Low build cost makes the device accessible to more people in more
+              parts of the world
+            </li>
+            <li>
+              Statelessness makes using one device with multiple seeds and
+              wallets feasible
+            </li>
+            <li>
+              A fully FOSS software architecture makes independent
+              build-from-source possible
+            </li>
+            <li>Non-bitcoin-specific hardware can greatly enhance privacy</li>
+          </ul>
+
+          <figure class="fig reveal">
+            <div class="plate">
+              <picture>
+                <source srcset="images/flagship.webp" type="image/webp" />
+                <img
+                src="images/flagship.jpg"
+                alt="A finished SeedSigner device in an enclosure"
+                loading="lazy"
+              />
+              </picture>
+            </div>
+            <figcaption>
+              <span class="ex">EX 07</span>
+              <span
+                >The finished object. Three commodity parts, no radios, no
+                stored secrets.</span
+              >
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ================================================ 05 catch ===== -->
+
+      <section class="chapter" id="ch05">
+        <div class="col stack">
+          <div>
+            <p class="eyebrow">
+              <span class="num">05</span> <span>The objections</span>
+              <a
+                class="src"
+                href="https://github.com/SeedSigner/independent_custody_guide#alright-but-theres-got-to-be-a-catch-right"
+                rel="noopener"
+                >source ↗</a
+              >
+            </p>
+            <h2>There has to be a catch. Here are nine of them.</h2>
+            <div class="prose">
+              <p class="lede">
+                No technology is all positive, least of all security technology.
+                This is the section that makes the guide worth reading even if
+                you never build the device: the author lists every criticism of
+                SeedSigner they are aware of, in the critic's own framing, and
+                then answers each one — including the ones they concede.
+              </p>
+            </div>
+          </div>
+
+          <div class="findings">
+            <div class="finding">
+              <p class="verdict"><i>01</i> Fair — and accepted</p>
+              <h3>
+                Direct access to seeds increases the opportunity for disclosure
+              </h3>
+              <p>
+                Agreed. Though some people use the model for day-to-day storage,
+                it was designed for cold storage — the expectation is 1–2
+                outgoing transactions a year, for larger spends or UTXO
+                consolidation. Deposits, including to freshly generated receive
+                addresses, never need a private key. So seeds should live in
+                remote, physically secure, non-visibly secure, tamper-evident
+                storage, and be accessed away from anyone or anything watching. A
+                BIP39 passphrase is an excellent mitigation for disclosure risk
+                during access.
+              </p>
+            </div>
+
+            <div class="finding">
+              <p class="verdict"><i>02</i> Reasonable — a trade-off</p>
+              <h3>
+                Relying on one hardware and software profile for several keys in
+                a quorum
+              </h3>
+              <p>
+                Absolutely reasonable: if one device signs for every member of
+                the quorum, a critical flaw in that key storage or signing
+                mechanism could jeopardise the whole wallet. Best practice is
+                multiple different profiles among cosigners. What you get in
+                exchange is not buying several hardware wallets and not needing
+                to become fluent in the correct use and maintenance of several
+                different devices. The guide argues its design manages the
+                downside — and says individual users have to decide whether they
+                agree. “It's important not to let the perfect be the enemy of the
+                <strong>really good</strong>.”
+              </p>
+            </div>
+
+            <div class="finding">
+              <p class="verdict"><i>03</i> Reasonable</p>
+              <h3>A full Linux installation has a large attack surface</h3>
+              <p>
+                True. Devices written to run on bare metal unarguably have fewer
+                attack vectors and fewer opportunities to introduce malicious
+                code. The counter-argument is operational: once the OS image is
+                written to the MicroSD card in the signer, running the device in
+                isolation from the internet and from other devices provides
+                sufficient assurance that a user cannot inadvertently introduce
+                code that exploits a Raspberry Pi OS vulnerability.
+              </p>
+            </div>
+
+            <div class="finding">
+              <p class="verdict"><i>04</i> Disagree on the first half</p>
+              <h3>
+                Airgapped communication is security theatre with a worse user
+                experience
+              </h3>
+              <p>
+                Wholeheartedly disagreed on the theatre charge. Once the MicroSD
+                card is in, the only channels to the outside world are the camera
+                (in) and the screen (out). It is technically possible to leak key
+                material via QR — but an attacker would need
+                <em>both</em> a compromised SeedSigner install
+                <em>and</em> a compromised partner computer able to recognise,
+                capture and exfiltrate the secret. On UX: QR exchange is
+                unarguably less convenient than the alternatives, and the guide
+                calls that a more than acceptable price for keeping keys secret
+                and isolated.
+              </p>
+            </div>
+
+            <div class="finding">
+              <p class="verdict"><i>05</i> Rejected</p>
+              <h3>
+                Unpaid developers don't have the time, expertise or care to “do
+                security”
+              </h3>
+              <p>
+                Many of Bitcoin Core's most sophisticated contributors made
+                their contributions without a company sponsoring the work. The
+                guide calls this blanket statement sloppy, bordering on
+                malicious. As a fully FOSS project the code is available to
+                audit and anyone can propose changes. Security vulnerabilities
+                are found in code written by professionals all the time.
+              </p>
+            </div>
+
+            <div class="finding">
+              <p class="verdict"><i>06</i> Valid — but mitigable</p>
+              <h3>
+                No software validity assurance leaves room for malicious code
+              </h3>
+              <p>
+                Conceded as generally valid. The Pi Zero has no mechanism to
+                validate that installed software came from a trusted source, so
+                a user could download a rogue build that harvests keys or swaps
+                addresses in a PSBT. Just as self-custody makes you ultimately
+                responsible for your stack, <strong>you</strong> are the software
+                validation mechanism. The project publishes a PGP public key and
+                signs a message containing a SHA256 hash of each release;
+                step-by-step download, verification and write instructions live
+                in the main repository's readme.
+              </p>
+            </div>
+
+            <div class="finding">
+              <p class="verdict"><i>07</i> Not far-fetched — countered</p>
+              <h3>An evil maid could use malicious code to exfiltrate keys</h3>
+              <p>
+                The classic evil maid has access to your private space and
+                stumbles onto something valuable. Applied here, the guide notes,
+                the attack is really “the evil adversary that can create
+                sophisticated malware, then secretly accesses your signing device
+                on multiple occasions, installs undetectable rogue software, and
+                subsequently returns to abscond with your keys”. Not written off
+                — but the countermeasures are reasonable: store the device
+                somewhere relatively secure, use tamper-evident packaging if your
+                environment warrants it, and if you ever suspect tampering, zero
+                the MicroSD card and re-write the release image.
+              </p>
+            </div>
+
+            <div class="finding">
+              <p class="verdict"><i>08</i> Too vague to answer</p>
+              <h3>
+                The Broadcom BCM2835 in the Pi Zero is closed source and possibly
+                compromised
+              </h3>
+              <p>
+                Described as perhaps the vaguest criticism the author has come
+                across. No information has been located indicating a specific
+                backdoor or vulnerability in the Broadcom chip used on the Pi
+                Zero that would create a security problem for SeedSigner.
+              </p>
+            </div>
+
+            <div class="finding">
+              <p class="verdict"><i>09</i> Fair — but a high bar to exploit</p>
+              <h3>Portions of the Raspberry Pi firmware are closed source</h3>
+              <p>
+                Fair: the GPU-related part of the firmware is closed, and while
+                it is a small portion, something is either open source or it
+                isn't. But consider the attack. Nobody knows which boards will
+                become signing devices, so the entire global Pi supply chain
+                would have to be compromised so that every single unit carried
+                the malicious functionality — for the miniscule fraction that
+                ever become SeedSigners. Then the attacker must work out where
+                the compromised devices ended up and gain physical access to
+                them. And because the device operates in isolation, leaking a key
+                by QR would additionally require the partner computer to be
+                compromised to collect it.
+              </p>
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="prose">
+              <h3 class="sub">A closing note on threat modelling</h3>
+              <p>
+                If you are trying to mitigate state-level adversaries capable of
+                covertly compromising entire hardware and software supply chains,
+                the guide points you at the graphic on the right, taken from
+                <a href="https://anonymousplanet.org/guide.html" rel="noopener"
+                  >The Hitchhiker's Guide to Online Anonymity</a
+                >.
+              </p>
+              <p>
+                <strong>All</strong> hardware devices are vulnerable at that
+                level. And a corporate hardware wallet, purpose-built and
+                marketed specifically to secure private keys, is a far more
+                productive target for the extensive resources such an attack
+                requires than a general-purpose single-board computer that might
+                become anything.
+              </p>
+            </div>
+            <figure class="fig fig-narrow reveal">
+              <div class="plate">
+                <picture>
+                  <source srcset="images/hitchhikers_guide.webp" type="image/webp" />
+                  <img
+                  src="images/hitchhikers_guide.jpg"
+                  alt="A diagram from The Hitchhiker's Guide to Online Anonymity showing layers of hardware and software supply chain compromise"
+                  loading="lazy"
+                />
+                </picture>
+              </div>
+              <figcaption>
+                <span class="ex">EX 08</span>
+                <span
+                  >Reproduced in the guide from The Hitchhiker's Guide to Online
+                  Anonymity.</span
+                >
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================ 06 does ====== -->
+
+      <section class="chapter chapter-alt" id="ch06">
+        <div class="col stack">
+          <div>
+            <p class="eyebrow">
+              <span class="num">06</span> <span>Core functionality</span>
+              <a
+                class="src"
+                href="https://github.com/SeedSigner/independent_custody_guide#so-what-does-this-seedsigner-thing-actually-do"
+                rel="noopener"
+                >source ↗</a
+              >
+            </p>
+            <h2>So what does the thing actually do? Three jobs.</h2>
+            <div class="prose">
+              <p class="lede">
+                Generally speaking, SeedSigner helps you accomplish three
+                independent-custody tasks: create secure private keys in a
+                trust-minimised way, generate the extended public keys you need
+                to configure a wallet, and sign transactions via animated QR
+                code sets. Each deserves elaboration.
+              </p>
+            </div>
+          </div>
+
+          <div class="prose">
+            <h3 class="sub">Job one — creating keys you have reason to trust</h3>
+            <p>
+              What makes a private key secure? That it is generated from
+              information which is unpredictable, unreproducible and
+              unguessable. Those three properties are essentially the
+              mathematical concept of entropy. Software has got better at
+              producing unpredictable data, but disagreement persists about
+              whether truly random data can arise from organised, logical code
+              written by human beings. It goes almost without saying: it is not
+              best practice to trust a private key generated by a device that
+              takes no user input at all.
+            </p>
+            <p>
+              The simplest and perhaps best source of entropy is the randomness
+              of the physical world. The guide's favourite example is
+              fingerprints — shaped by in-utero blood pressure, blood oxygen
+              levels, maternal nutrition, hormone levels, amniotic fluid density
+              and composition, fetal position and movement, even the sum of
+              maternal movement during pregnancy. With that many inputs,
+              recreating the conditions twice is virtually impossible, which is
+              why no two people have ever had identical prints.
+            </p>
+            <p>
+              Bitcoiners need something quicker than nine months. SeedSigner
+              offers three routes, and they are not equivalent — they differ in
+              how much you must trust the device's code.
+            </p>
+          </div>
+
+          <div class="gradient">
+            <div class="gradient-scale">
+              <span>Least trust in the code</span>
+              <span>Most trust in the code</span>
+            </div>
+            <div class="gradient-bar" aria-hidden="true"></div>
+            <div class="methods">
+              <div>
+                <span class="label">Method 01</span>
+                <h3>Words out of a hat</h3>
+                <p>
+                  Randomly select 11 or 23 BIP39 words — often literally out of
+                  a hat — and let the device calculate the final checksum word.
+                  The most trustless option: you are only trusting the tool to
+                  do one calculation, and that calculation can be verified with
+                  another <em>offline</em> tool. The guide links a printable,
+                  cuttable
+                  <a
+                    href="https://seedxor.com/files/wordlist.pdf"
+                    rel="noopener"
+                    >BIP39 word list</a
+                  >.
+                </p>
+              </div>
+              <div>
+                <span class="label">Method 02</span>
+                <h3>Dice rolls</h3>
+                <p>
+                  Capture entropy from dice and convert the results into a key
+                  and a seed phrase for documentation. Verifiable with outside
+                  tools such as
+                  <a href="https://iancoleman.io/bip39/" rel="noopener"
+                    >Ian Coleman's BIP39 tool</a
+                  >
+                  and Coinkite's
+                  <a
+                    href="https://coldcard.com/docs/verifying-dice-roll-math"
+                    rel="noopener"
+                    >dice roll math documentation</a
+                  >.
+                </p>
+              </div>
+              <div>
+                <span class="label">Method 03</span>
+                <h3>A photograph</h3>
+                <p>
+                  Use entropy from a digital photo taken with the on-board
+                  camera. More than meets the eye goes in: not only the pixels
+                  of the photograph but the data from every preview frame
+                  rendered after the feature is activated, plus the Pi Zero's
+                  unique serial number and the number of milliseconds the device
+                  has been powered on. Very convenient — and of the three, the
+                  one that places the most trust in SeedSigner's code.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="prose">
+              <h3 class="sub">
+                Job two — the extended public keys that define a wallet
+              </h3>
+              <p>
+                Private keys are part of a cryptographic framework from the
+                1970s: public key, or asymmetric key, cryptography. Deriving the
+                unique public key from a private key is relatively trivial;
+                going back the other way is much harder, and considered
+                computationally impossible when the maths relating them is
+                complex enough. In Bitcoin, amounts are associated with public
+                key values, and only whoever holds the corresponding private key
+                can reassign them.
+              </p>
+              <p>
+                Early wallets were literally a collection of unrelated private
+                keys, each with its own public key — and you had to keep an
+                up-to-date copy of every one of them or lose coins. A Bitcoin
+                Improvement Proposal replaced that with a “master” or “extended”
+                private key from which a predictable sequence of child keys can
+                be derived. The public counterpart is the extended public key,
+                or <strong>XPUB</strong>: enough information to derive a
+                predictable sequence of child public keys, and therefore to
+                watch and receive.
+              </p>
+              <p>
+                Multisig goes one level up. Several extended public keys are
+                coordinated together, and the collection of xpubs
+                <em>plus</em> the specifics of how they combine is the
+                <strong>wallet descriptor</strong>. SeedSigner's job here is to
+                take a private key and produce the xpub the coordinator needs.
+              </p>
+            </div>
+            <figure class="fig fig-narrow reveal">
+              <div class="plate">
+                <picture>
+                  <source srcset="images/xpub3.webp" type="image/webp" />
+                  <img
+                  src="images/xpub3.jpg"
+                  alt="Three SeedSigner screens: a wallet coordinator picker, an Xpub Info screen showing master fingerprint and derivation path, and the resulting QR code"
+                  loading="lazy"
+                />
+                </picture>
+              </div>
+              <figcaption>
+                <span class="ex">EX 09</span>
+                <span
+                  >Pick the coordinator, review the xpub — master fingerprint,
+                  derivation path, the key itself — then hand it over as a QR
+                  code. (An earlier interface than the walkthrough
+                  screenshots.)</span
+                >
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="split">
+            <div class="prose">
+              <h3 class="sub">Job three — signing without ever handing over a key</h3>
+              <p>
+                If you are going to enforce separation between the coordinator
+                that talks to the network and the offline device that touches
+                keys, you need a way to move information across the gap.
+                <strong>BIP 174</strong> standardised the format: the partially
+                signed Bitcoin transaction, or PSBT. Think of it as a rough draft
+                of a transaction that is eventually meant to be broadcast.
+              </p>
+              <p>
+                The draft carries the basics — input and output amounts and keys,
+                and the network fee. It is a draft because at the start it lacks
+                the information needed to actually spend anything. It is a
+                proposal.
+              </p>
+              <p>
+                To get the proposal across the gap it is broken up and packaged
+                into a set of QR codes displayed on your computer's screen.
+                SeedSigner reads them in, reassembles them, decodes the
+                transaction and displays the details for review. If you approve
+                — and the nuance here matters — the device inserts the necessary
+                <strong>signatures</strong>. The keys active in memory generate
+                cryptographic proof that the signer holds what is needed to
+                authorise the spend. The keys themselves are not placed in the
+                transaction and do not leave the device.
+              </p>
+              <p>
+                The updated PSBT is encoded back into QR codes on SeedSigner's
+                screen and read into the coordinator through your webcam. The
+                coordinator checks whether it now holds enough proof to spend.
+                For a multisig wallet, you repeat that for as many signers as
+                the policy requires.
+              </p>
+            </div>
+            <figure class="fig fig-narrow reveal">
+              <div class="plate">
+                <picture>
+                  <source srcset="images/ss_txn_details.webp" type="image/webp" />
+                  <img
+                  src="images/ss_txn_details.jpg"
+                  alt="A SeedSigner screen headed Confirm Tx Details, listing one input minus fee equals two outputs, the last 13 characters of the receiving address, spend, change and fee amounts in sats"
+                  loading="lazy"
+                />
+                </picture>
+              </div>
+              <figcaption>
+                <span class="ex">EX 10</span>
+                <span
+                  >The whole point of the airgap, on one screen: inputs,
+                  outputs, the tail of the receiving address, the change and the
+                  fee — reviewed on the device that holds the key, not on the
+                  computer that built the transaction.</span
+                >
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="prose">
+            <h3 class="sub">Why the cumbersome method is the better one</h3>
+            <p>
+              Passing QR sets back and forth seems laborious next to a cable.
+              The guide's argument for it has four parts: the exchange is limited
+              in scope and duration, the information exchanged is auditable, it
+              is explicitly apparent when communication is taking place — and,
+              just as importantly, when it isn't.
+            </p>
+            <p>
+              That last point is the one people miss. With USB, Bluetooth or NFC
+              you generally cannot tell whether anything is passing between the
+              two devices. With QR you always can. If you suspect funny business,
+              the transaction data can be decoded and inspected with third-party
+              software; the guide notes this is more manual than it would like,
+              and points at
+              <a href="https://bip174.org" rel="noopener">bip174.org</a> as a
+              good emerging tool. And if you want to abort the exchange, the way
+              to stop it is obvious and immediate.
+            </p>
+            <p>
+              The guide is also honest that QR exchange is still early in terms
+              of usability, with continuous refinements on both sides to improve
+              scanning speed and accuracy.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================ 07 build ===== -->
+
+      <section class="chapter" id="ch07">
+        <div class="col stack">
+          <div>
+            <p class="eyebrow">
+              <span class="num">07</span> <span>Sourcing &amp; building</span>
+              <a
+                class="src"
+                href="https://github.com/SeedSigner/independent_custody_guide#alright-alright-this-all-sounds-pretty-cool-how-can-i-get-my-hands-on-a-seedsigner-to-try-it-out"
+                rel="noopener"
+                >source ↗</a
+              >
+            </p>
+            <h2>Three parts. No soldering required to get started.</h2>
+          </div>
+
+          <div class="bom">
+            <div class="part">
+              <div class="part-head">
+                <h3>Raspberry Pi Zero v1.3</h3>
+                <span class="price">the board</span>
+              </div>
+              <figure class="fig reveal">
+                <div class="plate">
+                  <picture>
+                    <source srcset="images/rpi_zero_v1_3.webp" type="image/webp" />
+                    <img
+                    src="images/rpi_zero_v1_3.jpg"
+                    alt="A Raspberry Pi Zero version 1.3 single board computer"
+                    loading="lazy"
+                  />
+                  </picture>
+                </div>
+                <figcaption>
+                  <span class="ex">EX 11</span>
+                  <span>Introduced in 2015 as a smaller Raspberry Pi.</span>
+                </figcaption>
+              </figure>
+              <p>
+                The absence of WiFi and Bluetooth hardware is what makes the 1.3
+                ideal: it is an inherently airgapped system rather than a system
+                configured to behave like one.
+              </p>
+            </div>
+
+            <div class="part">
+              <div class="part-head">
+                <h3>Waveshare 1.3″ 240×240 LCD hat</h3>
+                <span class="price">≤ $15</span>
+              </div>
+              <figure class="fig reveal">
+                <div class="plate">
+                  <picture>
+                    <source srcset="images/waveshare_hat.webp" type="image/webp" />
+                    <img
+                    src="images/waveshare_hat.jpg"
+                    alt="A Waveshare 1.3 inch 240 by 240 LCD display and controls hat"
+                    loading="lazy"
+                  />
+                  </picture>
+                </div>
+                <figcaption>
+                  <span class="ex">EX 12</span>
+                  <span
+                    >Display, joystick and buttons on one
+                    <a
+                      href="https://www.waveshare.com/1.3inch-lcd-hat.htm"
+                      rel="noopener"
+                      >module</a
+                    >.</span
+                  >
+                </figcaption>
+              </figure>
+              <p>
+                Nothing terribly special about it — the big advantage is that
+                Waveshare publishes a Python-friendly driver, which made it
+                possible to hit the ground running. An earlier 120×120 module got
+                tried first; on a screen that small the extra pixels turned out
+                to matter. <strong>Order the 240×240 designation</strong>:
+                Waveshare sells similar-looking modules that will not work with
+                the released software.
+              </p>
+            </div>
+
+            <div class="part">
+              <div class="part-head">
+                <h3>Pi-compatible camera</h3>
+                <span class="price">≤ $10</span>
+              </div>
+              <div class="fig-row">
+                <figure class="fig reveal">
+                  <div class="plate">
+                    <picture>
+                      <source srcset="images/picam.webp" type="image/webp" />
+                      <img
+                      src="images/picam.jpg"
+                      alt="A standard Raspberry Pi compatible camera module with ribbon cable"
+                      loading="lazy"
+                    />
+                    </picture>
+                  </div>
+                  <figcaption>
+                    <span class="ex">EX 13</span>
+                    <span>The stock OV5647 camera.</span>
+                  </figcaption>
+                </figure>
+                <figure class="fig reveal">
+                  <div class="plate">
+                    <picture>
+                      <source srcset="images/zerocam.webp" type="image/webp" />
+                      <img
+                      src="images/zerocam.jpg"
+                      alt="A compact Zero-specific camera module with components built into the ribbon cable"
+                      loading="lazy"
+                    />
+                    </picture>
+                  </div>
+                  <figcaption>
+                    <span class="ex">EX 14</span>
+                    <span>The compact Zero-specific build.</span>
+                  </figcaption>
+                </figure>
+              </div>
+              <p>
+                Most builders use a very inexpensive stock camera with an OV5647
+                sensor, capable of 5MP/1080p. Watch for the cable: a
+                Zero-compatible ribbon is typically gold in colour and narrower
+                than a standard Pi camera cable. A more compact profile also
+                exists, designed for the Zero, with some electrical components
+                built into the cable itself. Decide which enclosure you want
+                before choosing.
+              </p>
+            </div>
+          </div>
+
+          <div class="note">
+            <span class="label">Also, from the drawer</span>
+            <p>
+              A MicroSD card of at least 1GB — no particular class or brand, any
+              larger capacity is fine — and a MicroUSB cable. A phone charger
+              gives ample power, as do a laptop's USB ports; a USB power bank
+              makes the device properly portable. One caution: a 9V-to-USB
+              adapter often does <em>not</em> supply enough power for the camera,
+              and various malfunctions follow.
+            </p>
+          </div>
+
+          <div class="prose">
+            <h3 class="sub">On other Raspberry Pi models</h3>
+            <p>
+              SeedSigner is confirmed to work with the Raspberry Pi 2/3/4 and the
+              Pi Zero W/WH/2W. Most of those ship with wireless hardware
+              installed. As availability of the Zero v1.3 dried up through 2021,
+              the modules needed for WiFi and Bluetooth were excluded from the
+              prepared releases in the project repository — so from SeedSigner
+              version 0.4.5 onward, running on one of those boards puts a
+              <em>software</em> airgap in place instead of a physical one.
+            </p>
+            <p>
+              That software airgap means placing additional trust in the prepared
+              release, which is why the Zero v1.3 remains the recommendation for
+              full assurance that wireless communication simply is not possible.
+              Community members also went to work on physically disabling the
+              radios on the various boards; multiple approaches are
+              <a
+                href="https://github.com/DesobedienteTecnologico/rpi_disable_wifi_and_bt_by_hardware"
+                rel="noopener"
+                >documented here</a
+              >.
+            </p>
+          </div>
+
+          <div class="warn">
+            <span class="label">A note on the two MicroUSB ports</span>
+            <p>
+              The Pi Zero has three user-accessible ports: two MicroUSB and one
+              mini-HDMI. The two MicroUSB ports look identical, but the one
+              nearest the thumb-stick is <strong>power only</strong>, and the one
+              beside it carries power <em>and data</em>. Most users want the
+              power-only port — using it guarantees no data can be sent or
+              received over USB. Developers and testers may prefer the power+data
+              port to reach the device over SSH-over-USB. The mini-HDMI port is
+              also mainly a developer convenience.
+            </p>
+          </div>
+
+          <div class="prose">
+            <h3 class="sub">Keeping it all together</h3>
+            <p>
+              Several 3D-printable designs live in the
+              <a
+                href="https://github.com/SeedSigner/seedsigner/tree/dev/enclosures"
+                rel="noopener"
+                >project repository</a
+              >, each with an information page describing its characteristics and
+              the specific hardware it accommodates.
+            </p>
+          </div>
+
+          <div class="fig-row">
+            <figure class="fig reveal">
+              <div class="plate">
+                <picture>
+                  <source srcset="images/enclosure_photo.webp" type="image/webp" />
+                  <img
+                  src="images/enclosure_photo.jpg"
+                  alt="A 3D printed SeedSigner enclosure"
+                  loading="lazy"
+                />
+                </picture>
+              </div>
+              <figcaption>
+                <span class="ex">EX 15</span>
+                <span>A printed enclosure from the repository designs.</span>
+              </figcaption>
+            </figure>
+            <figure class="fig reveal">
+              <div class="plate">
+                <picture>
+                  <source srcset="images/orange_pill.webp" type="image/webp" />
+                  <img
+                  src="images/orange_pill.jpg"
+                  alt="Two pill-shaped 3D printed SeedSigner enclosures, one orange with white buttons and one white with orange buttons"
+                  loading="lazy"
+                />
+                </picture>
+              </div>
+              <figcaption>
+                <span class="ex">EX 16</span>
+                <span
+                  >The pill enclosures — the joke is load-bearing.</span
+                >
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="fig-row">
+            <figure class="fig reveal">
+              <div class="plate">
+                <picture>
+                  <source srcset="images/open_pill.webp" type="image/webp" />
+                  <img
+                  src="images/open_pill.jpg"
+                  alt="Three views of an Open Pill enclosure showing the exposed display hat, the camera lens and the power port"
+                  loading="lazy"
+                />
+                </picture>
+              </div>
+              <figcaption>
+                <span class="ex">EX 17</span>
+                <span
+                  >An open-frame variant: display and controls exposed, camera
+                  lens on the reverse.</span
+                >
+              </figcaption>
+            </figure>
+            <figure class="fig reveal">
+              <div class="plate">
+                <picture>
+                  <source srcset="images/compact_build.webp" type="image/webp" />
+                  <img
+                  src="images/compact_build.jpg"
+                  alt="A barebones SeedSigner build held together with acrylic plates, screws and nuts"
+                  loading="lazy"
+                />
+                </picture>
+              </div>
+              <figcaption>
+                <span class="ex">EX 18</span>
+                <span
+                  >A “barebones” build using commercial acrylic protectors,
+                  screws and nuts — this example from Keith Mukai, the project's
+                  lead developer.</span
+                >
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================ 08 testnet === -->
+
+      <section class="chapter chapter-alt" id="ch08">
+        <div class="col stack">
+          <div>
+            <p class="eyebrow">
+              <span class="num">08</span> <span>Practice first</span>
+              <a
+                class="src"
+                href="https://github.com/SeedSigner/independent_custody_guide#testnet-is-the-best-way-to-well-test"
+                rel="noopener"
+                >source ↗</a
+              >
+            </p>
+            <h2>
+              Testnet was technically the first altcoin. Use it before you use
+              your savings.
+            </h2>
+            <div class="prose">
+              <p class="lede">
+                Testnet is an entirely separate implementation of the Bitcoin
+                protocol, with its own nodes and miners, where the coins are
+                intended to have zero value. It is the most realistic and
+                accessible way to practise — and the great majority of bitcoiners
+                have never touched it, partly because not every wallet and tool
+                supports it.
+              </p>
+              <p>
+                Sparrow does, and setting it up is simple. The key move is
+                launching Sparrow from your terminal with a flag specifying the
+                network:
+              </p>
+            </div>
+          </div>
+
+          <div class="term">
+            <table>
+              <tbody>
+                <tr>
+                  <th scope="row">Windows</th>
+                  <td>Sparrow.exe -n testnet</td>
+                </tr>
+                <tr>
+                  <th scope="row">macOS</th>
+                  <td>open Sparrow.app --args -n testnet</td>
+                </tr>
+                <tr>
+                  <th scope="row">Linux</th>
+                  <td>Sparrow/bin/Sparrow -n testnet</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="prose">
+            <p>
+              Sparrow should pre-populate the settings needed to reach a default
+              public testnet server. If that one gives you trouble, or you would
+              rather use another, the guide points at a
+              <a
+                href="https://1209k.com/bitcoin-eye/ele.php?chain=tbtc"
+                rel="noopener"
+                >list of alternate testnet servers</a
+              >. You will also need coins to play with; the guide's preferred
+              source is
+              <a href="https://bitcoinfaucet.uo1.net" rel="noopener"
+                >this faucet</a
+              >. More detail on the launch flags lives in
+              <a
+                href="https://sparrowwallet.com/docs/faq.html#how-can-i-run-testnet"
+                rel="noopener"
+                >Sparrow's own FAQ</a
+              >.
+            </p>
+          </div>
+
+          <div class="note note-edit">
+            <span class="label">Editor's note — not from the guide</span>
+            <p>
+              Bitcoin's test networks and their faucets change over time. The
+              commands and links above are reproduced as the guide has them;
+              check the current state of testnet support in Sparrow and the
+              SeedSigner release notes before relying on any specific faucet or
+              server.
+            </p>
+          </div>
+
+          <figure class="fig fig-narrow reveal">
+            <div class="plate">
+              <picture>
+                <source srcset="images/sparrow_switch_testnet.webp" type="image/webp" />
+                <img
+                src="images/sparrow_switch_testnet.jpg"
+                alt="Sparrow's Tools menu with the Restart in Testnet option"
+                loading="lazy"
+              />
+              </picture>
+            </div>
+            <figcaption>
+              <span class="ex">EX 19</span>
+              <span
+                >If you didn't use the terminal flag: Tools → Restart in
+                Testnet.</span
+              >
+            </figcaption>
+          </figure>
+
+          <div class="split">
+            <div class="prose">
+              <h3 class="sub">Why the guide insists on this</h3>
+              <p>
+                The author's first cold storage setup, built in 2013–14, was a
+                series of offline-generated key pairs printed onto slips of paper
+                with bitaddress.org. It was secure the whole time it was in use.
+                But it had barely been tested, and there had never been an
+                opportunity to practise redeeming or spending from it.
+              </p>
+              <p>
+                Over a long bear market from 2014 to 2016 the anxiety grew — the
+                creeping question of whether the accumulated value is “real”, and
+                whether you will actually be able to get at it when you want to.
+                When the exchange rate started rising again, that anxiety
+                culminated in moving every coin out of cold storage into an
+                exchange account, where they were sold in early 2017 during the
+                fork wars. The guide recommends
+                <em>The Blocksize War</em> by Jonathan Bier to understand that
+                period.
+              </p>
+              <p>
+                “It goes without saying that I own a lot less bitcoin now, and
+                what I do own was all purchased at higher prices than those at
+                which I panic sold.”
+              </p>
+            </div>
+            <blockquote class="pull">
+              <p>
+                “A big part of my mission with SeedSigner is to help people avoid
+                making a similar mistake — friends don't let friends sell
+                bitcoin. Don't be weak-handed like I was.”
+              </p>
+              <cite
+                >Take the time to think through how you'll be most comfortable
+                holding your coins over the long term. Then bring that setup into
+                reality.</cite
+              >
+            </blockquote>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================ 09 walk ====== -->
+
+      <section class="chapter" id="ch09">
+        <div class="col stack">
+          <div>
+            <p class="eyebrow">
+              <span class="num">09</span> <span>The walkthrough</span>
+              <a
+                class="src"
+                href="https://github.com/SeedSigner/independent_custody_guide#can-we-get-started-with-the-actual-guide-already"
+                rel="noopener"
+                >source ↗</a
+              >
+            </p>
+            <h2>A 2-of-3 multisig wallet, start to broadcast.</h2>
+            <div class="prose">
+              <p class="lede">
+                Sparrow is running in testnet mode and you have a working
+                SeedSigner. Fourteen steps from here to a signed, broadcast
+                transaction. The screens below come from the guide; specific
+                amounts, fees and change values will differ on your own device.
+              </p>
+            </div>
+          </div>
+
+          <div class="stack">
+            <div class="step">
+              <span class="step-n">01</span>
+              <div class="step-body">
+                <h3>Create three private keys</h3>
+                <p>
+                  Any of the three entropy methods works. The guide moves quickly
+                  here and uses seed-from-image, then repeats the whole process
+                  twice more for a total of three keys. As long as you are
+                  satisfied you kept these keys secret during testing, you can
+                  reuse them for your mainnet wallet later.
+                </p>
+                <p class="path">
+                  <b>SeedSigner</b><span>Seeds</span><span>Create a seed</span
+                  ><span>New seed (camera icon)</span><span>click joystick</span
+                  ><span>reshoot | accept</span>
+                </p>
+                <figure class="fig reveal">
+                  <div class="plate">
+                    <picture>
+                      <source srcset="images/seedsigner_create_seed_from_image.webp" type="image/webp" />
+                      <img
+                      src="images/seedsigner_create_seed_from_image.jpg"
+                      alt="SeedSigner screens for creating a seed from a camera image"
+                      loading="lazy"
+                    />
+                    </picture>
+                  </div>
+                  <figcaption>
+                    <span class="ex">EX 20</span>
+                    <span>Creating a key from a photograph.</span>
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-n">02</span>
+              <div class="step-body">
+                <h3>Write the words down, then verify the backup</h3>
+                <p>
+                  After choosing the mnemonic length you get a screen showing
+                  your 12 or 24 words. Write them down and double-check what you
+                  copied using <strong>Verify Backup</strong>. You are then
+                  offered the chance to apply a BIP39 passphrase before
+                  finalising. The guide does not cover passphrases here, but be
+                  aware of what one does: it transforms the seed into a
+                  completely new private key that cannot be accessed without the
+                  words <strong>and</strong> the exact passphrase.
+                </p>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-n">03</span>
+              <div class="step-body">
+                <h3>Optional but recommended — transcribe a SeedQR</h3>
+                <p>
+                  Once the seed is finalised, you can use SeedSigner's manual
+                  transcription interface to record the phrase as a single-frame
+                  QR code, which makes importing the key back into the device
+                  fast and easy later. Expect the transcription to take about ten
+                  minutes.
+                </p>
+                <p class="path">
+                  <b>SeedSigner</b><span>Backup Seed</span
+                  ><span>Export as SeedQR</span><span>select format</span>
+                </p>
+                <figure class="fig reveal">
+                  <div class="plate">
+                    <picture>
+                      <source srcset="images/seedsigner_navigate_to_seedqr.webp" type="image/webp" />
+                      <img
+                      src="images/seedsigner_navigate_to_seedqr.jpg"
+                      alt="SeedSigner menu screens for exporting a seed as a SeedQR"
+                      loading="lazy"
+                    />
+                    </picture>
+                  </div>
+                  <figcaption>
+                    <span class="ex">EX 21</span>
+                    <span>Navigating to the SeedQR export.</span>
+                  </figcaption>
+                </figure>
+                <div class="warn">
+                  <span class="label">Never scan a SeedQR into anything online</span>
+                  <p>
+                    A QR-encoded seed should <strong>never</strong> be scanned
+                    into a device that connects to the internet. SeedSigner
+                    should likely be the only thing that ever reads it — with the
+                    possible future exception of another QR-enabled signing
+                    device. Never your computer's webcam. Never your phone's
+                    camera. It is secret information that grants access to your
+                    funds. If you would rather not encode a key as a QR at all,
+                    the words can always be typed into SeedSigner by hand.
+                  </p>
+                </div>
+                <figure class="fig reveal">
+                  <div class="plate">
+                    <picture>
+                      <source srcset="images/seedsigner_transcription_ui.webp" type="image/webp" />
+                      <img
+                      src="images/seedsigner_transcription_ui.jpg"
+                      alt="SeedSigner's manual SeedQR transcription interface"
+                      loading="lazy"
+                    />
+                    </picture>
+                  </div>
+                  <figcaption>
+                    <span class="ex">EX 22</span>
+                    <span
+                      >The transcription interface. Afterwards,
+                      <strong>Confirm SeedQR</strong> activates the camera so you
+                      can scan what you just made and check it is right.</span
+                    >
+                  </figcaption>
+                </figure>
+                <figure class="fig reveal">
+                  <div class="plate">
+                    <picture>
+                      <source srcset="images/seed_qr_card_example.webp" type="image/webp" />
+                      <img
+                      src="images/seed_qr_card_example.jpg"
+                      alt="A printed card with a seed phrase written out and a hand-transcribed SeedQR"
+                      loading="lazy"
+                    />
+                    </picture>
+                  </div>
+                  <figcaption>
+                    <span class="ex">EX 23</span>
+                    <span
+                      >A finished card, using one of the printable forms in the
+                      project's
+                      <a
+                        href="https://github.com/SeedSigner/seedsigner/tree/main/docs"
+                        rel="noopener"
+                        >docs folder</a
+                      >.</span
+                    >
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-n">04</span>
+              <div class="step-body">
+                <h3>Create the wallet in Sparrow</h3>
+                <p>
+                  With Sparrow in testnet mode, make a new wallet and give it a
+                  sensible name.
+                </p>
+                <div class="fig-row">
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/sparrow_new_wallet.webp" type="image/webp" />
+                        <img
+                        src="images/sparrow_new_wallet.png"
+                        alt="Sparrow's File menu with New Wallet selected"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 24</span>
+                      <span>File → New Wallet.</span>
+                    </figcaption>
+                  </figure>
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/sparrow_name_wallet.webp" type="image/webp" />
+                        <img
+                        src="images/sparrow_name_wallet.png"
+                        alt="Sparrow's wallet naming dialogue"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 25</span>
+                      <span>Name it.</span>
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-n">05</span>
+              <div class="step-body">
+                <h3>Set the policy to multi-signature</h3>
+                <p>
+                  Choose <strong>Multi signature</strong> as the Policy Type.
+                  Leave the Script Type as
+                  <strong>Native Segwit (P2WSH)</strong>.
+                </p>
+                <figure class="fig reveal">
+                  <div class="plate">
+                    <picture>
+                      <source srcset="images/sparrow_select_multisig.webp" type="image/webp" />
+                      <img
+                      src="images/sparrow_select_multisig.png"
+                      alt="Sparrow's Policy Type dropdown with Multi signature selected"
+                      loading="lazy"
+                    />
+                    </picture>
+                  </div>
+                  <figcaption>
+                    <span class="ex">EX 26</span>
+                    <span>Policy Type → Multi signature.</span>
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-n">06</span>
+              <div class="step-body">
+                <h3>Charter the board: three cosigners, two required</h3>
+                <p>
+                  Selecting multisig makes a
+                  <strong>Cosigners</strong> control appear in the top right. Set
+                  the sliders so the wallet has three cosigners in total and
+                  requires a minimum of two to authorise a transaction.
+                </p>
+                <figure class="fig reveal">
+                  <div class="plate">
+                    <picture>
+                      <source srcset="images/sparrow_cosigners.webp" type="image/webp" />
+                      <img
+                      src="images/sparrow_cosigners.png"
+                      alt="Sparrow's cosigner sliders set to two of three"
+                      loading="lazy"
+                    />
+                    </picture>
+                  </div>
+                  <figcaption>
+                    <span class="ex">EX 27</span>
+                    <span>Two signatures out of three keys.</span>
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-n">07</span>
+              <div class="step-body">
+                <h3>Start adding cosigners</h3>
+                <p>
+                  Cosigners are called <strong>Keystores</strong> in Sparrow.
+                  There are three tabs, one per member of the quorum. Under
+                  Keystore 1, choose
+                  <strong>Airgapped Hardware Wallet</strong>, which lists the
+                  supported airgapped devices.
+                </p>
+                <figure class="fig reveal">
+                  <div class="plate">
+                    <picture>
+                      <source srcset="images/sparrow_select_airgapped_device.webp" type="image/webp" />
+                      <img
+                      src="images/sparrow_select_airgapped_device.png"
+                      alt="Sparrow's list of airgapped hardware wallets including SeedSigner"
+                      loading="lazy"
+                    />
+                    </picture>
+                  </div>
+                  <figcaption>
+                    <span class="ex">EX 28</span>
+                    <span>Pick SeedSigner from the airgapped devices.</span>
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-n">08</span>
+              <div class="step-body">
+                <h3>Put the SeedSigner on testnet — don't skip this</h3>
+                <p>
+                  Return to the device and make sure the network is set to
+                  Testnet, or the keys you export will not match the wallet you
+                  are building.
+                </p>
+                <p class="path">
+                  <b>SeedSigner</b><span>Settings</span><span>Advanced</span
+                  ><span>Bitcoin Network</span><span>Testnet</span>
+                </p>
+                <figure class="fig reveal">
+                  <div class="plate">
+                    <picture>
+                      <source srcset="images/testnet.webp" type="image/webp" />
+                      <img
+                      src="images/testnet.jpg"
+                      alt="SeedSigner settings screens showing the Bitcoin Network option set to Testnet"
+                      loading="lazy"
+                    />
+                    </picture>
+                  </div>
+                  <figcaption>
+                    <span class="ex">EX 29</span>
+                    <span>Network → Testnet.</span>
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-n">09</span>
+              <div class="step-body">
+                <h3>Export the first extended public key</h3>
+                <p>
+                  This assumes you have temporarily loaded the seed you want to
+                  use. After the Xpub Details review screen, one or more QR codes
+                  appear representing that seed's extended public key.
+                </p>
+                <p class="path">
+                  <b>SeedSigner</b><span>Seeds</span><span>select your seed</span
+                  ><span>Export Xpub</span><span>Multisig</span
+                  ><span>Native Segwit</span><span>Sparrow</span
+                  ><span>Export Xpub</span>
+                </p>
+                <div class="fig-row">
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/xpub1.webp" type="image/webp" />
+                        <img
+                        src="images/xpub1.jpg"
+                        alt="SeedSigner screens for exporting an xpub: multisig and script type selection"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 30</span>
+                      <span>Multisig, Native Segwit.</span>
+                    </figcaption>
+                  </figure>
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/xpub2.webp" type="image/webp" />
+                        <img
+                        src="images/xpub2.jpg"
+                        alt="SeedSigner screens selecting Sparrow as the coordinator and confirming the xpub export"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 31</span>
+                      <span>Coordinator: Sparrow.</span>
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-n">10</span>
+              <div class="step-body">
+                <h3>Scan the key across the airgap</h3>
+                <p>
+                  Back in Sparrow, press the SeedSigner
+                  <strong>Scan</strong> button to activate your webcam, and scan
+                  the QR codes off the device's screen.
+                </p>
+                <figure class="fig reveal">
+                  <div class="plate">
+                    <picture>
+                      <source srcset="images/xpub_scan.webp" type="image/webp" />
+                      <img
+                      src="images/xpub_scan.jpg"
+                      alt="Sparrow's webcam preview scanning a QR code displayed on a SeedSigner screen"
+                      loading="lazy"
+                    />
+                    </picture>
+                  </div>
+                  <figcaption>
+                    <span class="ex">EX 32</span>
+                    <span>Webcam in, QR out.</span>
+                  </figcaption>
+                </figure>
+                <div class="note">
+                  <span class="label">If the webcam struggles</span>
+                  <p>
+                    Press up or down on the thumb-stick to change the brightness
+                    of the displayed QR code if the screen is glaring. Ambient
+                    lighting affects focus. Setting
+                    <strong>QR Density</strong> to <strong>Low</strong> can also
+                    resolve scanning trouble. Some low-budget laptop cameras
+                    simply lack the resolution; with some of them, advanced
+                    driver settings can be tweaked to make them workable — the
+                    guide links
+                    <a
+                      href="https://www.addictivetips.com/windows-tips/access-advanced-settings-for-the-integrated-webcam-on-windows-10/amp/"
+                      rel="noopener"
+                      >a walkthrough for Windows</a
+                    >.
+                  </p>
+                </div>
+                <figure class="fig reveal">
+                  <div class="plate">
+                    <picture>
+                      <source srcset="images/key_1_entered.webp" type="image/webp" />
+                      <img
+                      src="images/key_1_entered.png"
+                      alt="Sparrow showing the first keystore renamed to SeedSigner with its extended public key details"
+                      loading="lazy"
+                    />
+                    </picture>
+                  </div>
+                  <figcaption>
+                    <span class="ex">EX 33</span>
+                    <span
+                      >The tab renames itself to “SeedSigner” and shows the key's
+                      details. Since this setup uses one device for three keys,
+                      relabel it “SeedSigner 1”.</span
+                    >
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-n">11</span>
+              <div class="step-body">
+                <h3>Repeat for keys two and three, then Apply</h3>
+                <p>
+                  Once all three keystores are filled in, click
+                  <strong>Apply</strong>. Sparrow offers to add a password to the
+                  wallet file; the guide leaves the fields blank and clicks
+                  <strong>No Password</strong>.
+                </p>
+                <div class="fig-row">
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/all_keys_entered.webp" type="image/webp" />
+                        <img
+                        src="images/all_keys_entered.png"
+                        alt="Sparrow with all three SeedSigner keystores populated"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 34</span>
+                      <span>Three keystores, one device.</span>
+                    </figcaption>
+                  </figure>
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/password_prompt.webp" type="image/webp" />
+                        <img
+                        src="images/password_prompt.png"
+                        alt="Sparrow's wallet password prompt"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 35</span>
+                      <span>No password, for this exercise.</span>
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-n">12</span>
+              <div class="step-body">
+                <h3>Back up the wallet descriptor. This is the step people skip.</h3>
+                <p>
+                  Not much appears to change, but the wallet now exists. The very
+                  first thing to do is make a static backup of the full wallet
+                  descriptor — every extended public key, plus the exact
+                  configuration describing how they combine. There are two
+                  reasons, and the first is blunt:
+                </p>
+                <ul class="marks marks-dot">
+                  <li>
+                    If you ever lose one of your three keys, the full descriptor
+                    is essential to keep access to your funds. Lose a cosigner
+                    key <em>and</em> have no descriptor and
+                    <strong>your funds are permanently lost</strong>.
+                  </li>
+                  <li>
+                    If you later want to verify that a receive or change address
+                    really belongs to your wallet as originally configured, a
+                    historical record is your best resource. SeedSigner is
+                    stateless and will not remember your wallet configuration —
+                    and if your coordinator were ever compromised, an attacker
+                    might feed you a falsified descriptor to defeat address
+                    verification and steal funds.
+                  </li>
+                </ul>
+                <div class="note">
+                  <span class="label">Private, but not secret</span>
+                  <p>
+                    A wallet descriptor is designated private but
+                    <strong>not secret</strong>. In the wrong hands it can be
+                    used to monitor every transaction your wallet makes — but it
+                    <strong>does not</strong> contain what is needed to access
+                    your funds. That distinction shapes where you are willing to
+                    keep it: printed hard copies are entirely acceptable, and so
+                    is a file on your computer, or even in “the cloud” — someone
+                    else's computer.
+                  </p>
+                </div>
+                <p>
+                  SeedSigner is compatible with Specter's descriptor format. In
+                  Sparrow, with the wallet loaded, go to
+                  <strong>File → Export Wallet</strong> and scroll to the
+                  <strong>Specter Desktop</strong> entry at the bottom of the
+                  list.
+                </p>
+                <div class="fig-row">
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/file_export.webp" type="image/webp" />
+                        <img
+                        src="images/file_export.jpg"
+                        alt="Sparrow's File menu with Export Wallet selected"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 36</span>
+                      <span>File → Export Wallet.</span>
+                    </figcaption>
+                  </figure>
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/specter_export.webp" type="image/webp" />
+                        <img
+                        src="images/specter_export.jpg"
+                        alt="Sparrow's export format list showing the Specter Desktop option"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 37</span>
+                      <span>Specter Desktop format.</span>
+                    </figcaption>
+                  </figure>
+                </div>
+                <figure class="fig fig-narrow reveal">
+                  <div class="plate">
+                    <picture>
+                      <source srcset="images/wallet_descriptor.webp" type="image/webp" />
+                      <img
+                      src="images/wallet_descriptor.jpg"
+                      alt="A QR code containing a full multisig wallet descriptor"
+                      loading="lazy"
+                    />
+                    </picture>
+                  </div>
+                  <figcaption>
+                    <span class="ex">EX 38</span>
+                    <span
+                      >“Show” displays the descriptor as a QR code you can
+                      screen-capture, print or save — this is the form you will
+                      want when verifying an address with SeedSigner later.
+                      “Export File” saves a JSON copy that can recreate the
+                      wallet if recovery is ever needed.</span
+                    >
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-n">13</span>
+              <div class="step-body">
+                <h3>Receive, then build a spend</h3>
+                <p>
+                  The Receive section hands out addresses without touching a
+                  single seed phrase — which is the whole point: Sparrow can
+                  accumulate bitcoin over years while your keys stay in their
+                  remote locations. When you are ready to spend, the Send section
+                  takes a destination address, a label and an amount.
+                </p>
+                <div class="fig-row">
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/receive.webp" type="image/webp" />
+                        <img
+                        src="images/receive.png"
+                        alt="Sparrow's Receive tab showing a fresh receive address"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 39</span>
+                      <span>Receive — no keys required.</span>
+                    </figcaption>
+                  </figure>
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/send.webp" type="image/webp" />
+                        <img
+                        src="images/send.png"
+                        alt="Sparrow's Send tab with address, label and amount fields"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 40</span>
+                      <span>Send — address, label, amount.</span>
+                    </figcaption>
+                  </figure>
+                </div>
+                <p>
+                  <strong>Create Transaction</strong> gives you an overview of
+                  the transaction as constructed, where you can inspect inputs
+                  and outputs. Satisfied? Then
+                  <strong>Finalize Transaction for Signing</strong>, which
+                  reveals the signing options.
+                </p>
+                <div class="fig-row">
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/txn.webp" type="image/webp" />
+                        <img
+                        src="images/txn.png"
+                        alt="Sparrow's transaction overview with inputs, outputs and fee"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 41</span>
+                      <span>The constructed transaction.</span>
+                    </figcaption>
+                  </figure>
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/txn2.webp" type="image/webp" />
+                        <img
+                        src="images/txn2.png"
+                        alt="Sparrow's signing options revealed after finalizing a transaction"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 42</span>
+                      <span>Signing options — start with “Show QR”.</span>
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-n">14</span>
+              <div class="step-body">
+                <h3>Across the gap, twice, then broadcast</h3>
+                <p>
+                  <strong>Show QR</strong> brings up an animated QR code carrying
+                  the rough draft — the PSBT. On the device, choose
+                  <strong>Scan QR</strong> from the main menu and aim the camera
+                  at your screen, using the live display as a guide.
+                </p>
+                <div class="fig-row">
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <img
+                        src="images/txn_gif_poster.jpg" data-gif="images/txn_gif.gif"
+                        alt="An animated QR code cycling through frames of a partially signed bitcoin transaction in Sparrow"
+                        loading="lazy"
+                      />
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 43</span>
+                      <span>The PSBT, animated.</span>
+                    </figcaption>
+                  </figure>
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <img
+                        src="images/txn_scan_poster.jpg" data-gif="images/txn_scan.gif"
+                        alt="A SeedSigner scanning an animated QR code from a computer screen, with a progress indicator filling"
+                        loading="lazy"
+                      />
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 44</span>
+                      <span>Reassembling it, frame by frame.</span>
+                    </figcaption>
+                  </figure>
+                </div>
+                <p>
+                  Once it is fully scanned in, the device shows you what you are
+                  actually authorising. Walk the review screens. If anything
+                  looks wrong, click the thumb-stick left to abort.
+                </p>
+                <p class="path">
+                  <b>Review</b><span>Review PSBT</span><span>PSBT Math</span
+                  ><span>Will Send (recipients)</span><span>Your Change</span>
+                </p>
+                <div class="fig-row">
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/ss_txn_scan_in.webp" type="image/webp" />
+                        <img
+                        src="images/ss_txn_scan_in.jpg"
+                        alt="SeedSigner review screens showing PSBT maths, recipients and change"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 45</span>
+                      <span
+                        >Your amounts and fees will differ from these.</span
+                      >
+                    </figcaption>
+                  </figure>
+                  <figure class="fig fig-slim reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/sign_psbt.webp" type="image/webp" />
+                        <img
+                        src="images/sign_psbt.jpg"
+                        alt="The SeedSigner screen offering Approve PSBT"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 46</span>
+                      <span>Approve PSBT.</span>
+                    </figcaption>
+                  </figure>
+                </div>
+                <p>
+                  SeedSigner adds the signatures, re-encodes the revised PSBT
+                  into animated QR frames, and displays them. Close Sparrow's QR
+                  window, choose <strong>Scan QR</strong> in Sparrow, and read
+                  the signatures back in through the webcam.
+                </p>
+                <div class="fig-row">
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <img
+                        src="images/signed_psbt_qrs_poster.jpg" data-gif="images/signed_psbt_qrs.gif"
+                        alt="An animated QR code on a SeedSigner screen containing the signed transaction"
+                        loading="lazy"
+                      />
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 47</span>
+                      <span>Signatures out — keys stay behind.</span>
+                    </figcaption>
+                  </figure>
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <img
+                        src="images/ss_psbt_back_in_poster.jpg" data-gif="images/ss_psbt_back_in.gif"
+                        alt="Sparrow's webcam scanning the animated QR code from a SeedSigner screen"
+                        loading="lazy"
+                      />
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 48</span>
+                      <span>And back into the coordinator.</span>
+                    </figcaption>
+                  </figure>
+                </div>
+                <p>
+                  In the Signatures section, “SeedSigner 1” is now shaded blue:
+                  that member of the quorum has supplied what it needed to.
+                  Repeat the whole sequence with the second or third key, and the
+                  other slot fills in too.
+                </p>
+                <div class="fig-row">
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/sparrow_sig_1.webp" type="image/webp" />
+                        <img
+                        src="images/sparrow_sig_1.png"
+                        alt="Sparrow's signature panel with the first cosigner shaded in"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 49</span>
+                      <span>One of two.</span>
+                    </figcaption>
+                  </figure>
+                  <figure class="fig reveal">
+                    <div class="plate">
+                      <picture>
+                        <source srcset="images/sparrow_sig_2.webp" type="image/webp" />
+                        <img
+                        src="images/sparrow_sig_2.png"
+                        alt="Sparrow's signature panel with two cosigners shaded in and the transaction ready to broadcast"
+                        loading="lazy"
+                      />
+                      </picture>
+                    </div>
+                    <figcaption>
+                      <span class="ex">EX 50</span>
+                      <span>Two of two. Quorum reached.</span>
+                    </figcaption>
+                  </figure>
+                </div>
+                <div class="warn">
+                  <span class="label">Broadcast</span>
+                  <p>
+                    Click <strong>Broadcast Transaction</strong>. This
+                    communicates the transaction, signatures included, to other
+                    nodes and enters it into the queue for inclusion in a block.
+                    Status will read “Unconfirmed” until it lands in one.
+                    Congratulations — you have run the whole loop without a
+                    private key ever leaving the device.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================ 10 vars ====== -->
+
+      <section class="chapter chapter-alt" id="ch10">
+        <div class="col stack">
+          <div>
+            <p class="eyebrow">
+              <span class="num">10</span> <span>Final variables</span>
+              <a
+                class="src"
+                href="https://github.com/SeedSigner/independent_custody_guide#variables-to-consider"
+                rel="noopener"
+                >source ↗</a
+              >
+            </p>
+            <h2>Nine decisions the walkthrough deliberately made for you.</h2>
+            <div class="prose">
+              <p class="lede">
+                The steps above show the mechanics. Designing a system you will
+                actually live with for years means going back through the choices
+                that were pruned to keep the instructions manageable. The guide
+                closes by handing each one back, with its own perspective
+                attached.
+              </p>
+            </div>
+          </div>
+
+          <div class="vars">
+            <div class="var">
+              <span class="label">01</span>
+              <h3>Electrum server or full node?</h3>
+              <p>
+                Connecting your coordinator to someone else's server means
+                implicitly trusting it for accurate, honest, up-to-date
+                information about the network — and it can be a significant
+                privacy leak. Your own node is far more private and trustless,
+                but costs either a dedicated machine or several hundred gigabytes
+                of local disk. A pruned node, which keeps no full historical
+                copy of the chain, is a reasonable compromise with its own
+                trade-offs.
+              </p>
+            </div>
+            <div class="var">
+              <span class="label">02</span>
+              <h3>How many members does your board have?</h3>
+              <p>
+                The guide demonstrates 2-of-3; 3-of-5 is another popular choice;
+                the possibilities are effectively endless. As a real example, the
+                project's own development fund is a 4-of-6 where four
+                stakeholders hold one key each and the founder holds the
+                remaining two — a little more influence over spends, while still
+                allowing the founder to vanish without the funds becoming
+                inaccessible.
+              </p>
+            </div>
+            <div class="var">
+              <span class="label">03</span>
+              <h3>12 or 24 words?</h3>
+              <p>
+                A rabbit hole of its own. Technically a 24-word seed captures
+                significantly more entropy. But given a multisig wallet with at
+                least three cosigners, the guide's view is that multiple 12-word
+                seeds provide adequate inputs — while for a single-signature
+                wallet it would choose 24. Worth deciding early, since 24-word
+                seeds mean noticeably more work if you plan to hand-transcribe
+                SeedQRs.
+              </p>
+            </div>
+            <div class="var">
+              <span class="label">04</span>
+              <h3>Passphrase or no passphrase?</h3>
+              <p>
+                The critical thing to understand is that a BIP39 passphrase
+                transforms the seed into a wholly new private key that
+                <strong>cannot</strong> be accessed without the exact
+                passphrase. It is an extremely powerful protection against
+                inadvertent or malicious disclosure; the trade-off is a new
+                requirement to reproduce it correctly when you want to spend.
+                Each key in the quorum can carry the same or a different
+                passphrase — more safeguards, more complexity.
+              </p>
+            </div>
+            <div class="var">
+              <span class="label">05</span>
+              <h3>Duress or decoy funds?</h3>
+              <p>
+                Take a seed — probably the one stored at home — build a
+                single-signature wallet from it, and fund it. If someone coerces
+                you in person, you can produce that wallet as “all you have”.
+                The amount should be enough to convince an attacker it is
+                everything, or at least enough to make taking it and leaving
+                worthwhile. This is a widely known technique, so decide whether
+                it fits your situation.
+              </p>
+            </div>
+            <div class="var">
+              <span class="label">06</span>
+              <h3>Do you like heavy metal?</h3>
+              <p>
+                Pen and marker fade over the long term, depending on the writing
+                instrument and the paper — and however well you choose, all of it
+                burns. Metal QR solutions will keep improving, but even a
+                low-cost metal washer backup is adequate for seed words. If you
+                pick a 3-of-5 quorum, ask how likely it really is that three of
+                your seeds are destroyed by fire.
+              </p>
+            </div>
+            <div class="var">
+              <span class="label">07</span>
+              <h3>How many copies of each key?</h3>
+              <p>
+                The guide is a firm believer in exactly one copy of each key in
+                the quorum, almost certainly on metal. Two copies may halve your
+                chance of loss, but stored in two locations they may double your
+                chance of disclosure. And since tolerating the loss of a key is
+                one of multisig's core strengths, one copy each is the coherent
+                choice.
+              </p>
+            </div>
+            <div class="var">
+              <span class="label">08</span>
+              <h3>Where do the keys live?</h3>
+              <p>
+                Safe deposit boxes and in-home safes are the obvious two, and you
+                will want real geographic distribution — same neighbourhood? city?
+                region? country? — informed by how often you expect to need
+                access. Factor in fire resistance, especially if you skipped
+                metal. Friends with large gun safes can be a good option. Plan
+                periodic “key checks” to confirm your seeds are still secure.
+              </p>
+            </div>
+            <div class="var">
+              <span class="label">09</span>
+              <h3>Tamper-resistant, or tamper-evident?</h3>
+              <p>
+                Bank employees are not supposed to be able to snoop through safe
+                deposit boxes, but once your keys are out of sight you genuinely
+                do not know. Tamper resistance adds a second barrier — a small
+                locked box. Tamper evidence tells you whether someone tried.
+                There are not many great products; consider the sealable bags law
+                enforcement uses for evidence, and mark the seal with your
+                initials or another unique marking.
+              </p>
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="prose">
+              <h3 class="sub">And the one the guide is sympathetic to</h3>
+              <p>
+                <strong>Mixing in other signing devices.</strong> Beyond the
+                scope of the guide, but some argue that a mix of devices from
+                different manufacturers, with different codebases and security
+                mechanisms, improves your overall posture — and the author says
+                plainly they are sympathetic to that argument.
+              </p>
+              <p>
+                Playing devil's advocate against it: does becoming proficient
+                with several hardware profiles justify the technical diversity it
+                buys you? Weigh the costs and benefits and decide how many device
+                profiles belong in your quorum.
+              </p>
+            </div>
+            <blockquote class="pull">
+              <p>
+                “A complimentary perspective is to not let the perfect be the
+                enemy of the sufficiently good.”
+              </p>
+              <cite>The through-line of the whole document</cite>
+            </blockquote>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================ 11 sources === -->
+
+      <section class="chapter" id="ch11">
+        <div class="col stack">
+          <div>
+            <p class="eyebrow">
+              <span class="num">11</span> <span>Closing &amp; sources</span>
+              <a
+                class="src"
+                href="https://github.com/SeedSigner/independent_custody_guide#closing-thoughts"
+                rel="noopener"
+                >source ↗</a
+              >
+            </p>
+            <h2>A living document — and everything it points at.</h2>
+            <div class="prose">
+              <p class="lede">
+                The guide is explicitly intended as a living document, updated as
+                the project grows. Its author invites suggestions from the start
+                — including small grammar tweaks and spelling corrections — as
+                pull requests or issues on the repository. If you spot something
+                here that has drifted from the source, the source wins; go read
+                it.
+              </p>
+              <p>
+                The closing thanks go to collaborators Nick and Keith for jumping
+                into the adventure head-first, to <strong>all</strong> of the
+                people who have contributed to SeedSigner in the wide variety of
+                ways people have, and to @jevidon for an early review of the
+                document.
+              </p>
+            </div>
+          </div>
+
+          <div class="sources">
+            <div>
+              <h3>The guide itself</h3>
+              <ul>
+                <li>
+                  SeedSigner Independent Custody Guide — the complete original
+                  text, from which every quotation, figure and screenshot on this
+                  page is drawn
+                  <a
+                    href="https://github.com/SeedSigner/independent_custody_guide"
+                    rel="noopener"
+                    >github.com/SeedSigner/independent_custody_guide</a
+                  >
+                </li>
+                <li>
+                  The SeedSigner project — releases, verification instructions,
+                  enclosures and docs
+                  <a href="https://github.com/SeedSigner/seedsigner" rel="noopener"
+                    >github.com/SeedSigner/seedsigner</a
+                  >
+                </li>
+                <li>
+                  Project site
+                  <a href="https://seedsigner.com" rel="noopener"
+                    >seedsigner.com</a
+                  >
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3>Wallet coordinators</h3>
+              <ul>
+                <li>
+                  Sparrow Wallet — used throughout the walkthrough
+                  <a href="https://sparrowwallet.com" rel="noopener"
+                    >sparrowwallet.com</a
+                  >
+                </li>
+                <li>
+                  Running Sparrow on testnet
+                  <a
+                    href="https://sparrowwallet.com/docs/faq.html#how-can-i-run-testnet"
+                    rel="noopener"
+                    >sparrowwallet.com/docs/faq.html</a
+                  >
+                </li>
+                <li>
+                  Specter Desktop
+                  <a href="https://specter.solutions" rel="noopener"
+                    >specter.solutions</a
+                  >
+                </li>
+                <li>
+                  Specter-DIY — the airgapped DIY signer that inspired SeedSigner
+                  <a
+                    href="https://github.com/cryptoadvance/specter-diy"
+                    rel="noopener"
+                    >github.com/cryptoadvance/specter-diy</a
+                  >
+                </li>
+                <li>
+                  Bitcoin Core releases
+                  <a
+                    href="https://github.com/bitcoin/bitcoin/releases"
+                    rel="noopener"
+                    >github.com/bitcoin/bitcoin/releases</a
+                  >
+                </li>
+                <li>
+                  BlueWallet
+                  <a href="https://bluewallet.io" rel="noopener">bluewallet.io</a>
+                </li>
+                <li>
+                  Nunchuk
+                  <a href="https://nunchuk.io" rel="noopener">nunchuk.io</a>
+                </li>
+                <li>
+                  Keeper
+                  <a href="https://bitcoinkeeper.app" rel="noopener"
+                    >bitcoinkeeper.app</a
+                  >
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3>Keys, entropy &amp; verification</h3>
+              <ul>
+                <li>
+                  Printable, cuttable BIP39 word list
+                  <a href="https://seedxor.com/files/wordlist.pdf" rel="noopener"
+                    >seedxor.com/files/wordlist.pdf</a
+                  >
+                </li>
+                <li>
+                  Ian Coleman's BIP39 tool — for verifying seed generation
+                  offline
+                  <a href="https://iancoleman.io/bip39/" rel="noopener"
+                    >iancoleman.io/bip39</a
+                  >
+                </li>
+                <li>
+                  Coinkite on verifying dice roll math
+                  <a
+                    href="https://coldcard.com/docs/verifying-dice-roll-math"
+                    rel="noopener"
+                    >coldcard.com/docs/verifying-dice-roll-math</a
+                  >
+                </li>
+                <li>
+                  Inspecting PSBTs with third-party software
+                  <a href="https://bip174.org" rel="noopener">bip174.org</a>
+                </li>
+                <li>
+                  Printable seed and SeedQR forms
+                  <a
+                    href="https://github.com/SeedSigner/seedsigner/tree/main/docs"
+                    rel="noopener"
+                    >github.com/SeedSigner/seedsigner/tree/main/docs</a
+                  >
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3>Hardware</h3>
+              <ul>
+                <li>
+                  Waveshare 1.3″ 240×240 LCD hat
+                  <a
+                    href="https://www.waveshare.com/1.3inch-lcd-hat.htm"
+                    rel="noopener"
+                    >waveshare.com/1.3inch-lcd-hat.htm</a
+                  >
+                </li>
+                <li>
+                  Disabling WiFi and Bluetooth on Raspberry Pi boards by hardware
+                  <a
+                    href="https://github.com/DesobedienteTecnologico/rpi_disable_wifi_and_bt_by_hardware"
+                    rel="noopener"
+                    >github.com/DesobedienteTecnologico/rpi_disable_wifi_and_bt_by_hardware</a
+                  >
+                </li>
+                <li>
+                  3D-printable enclosure designs
+                  <a
+                    href="https://github.com/SeedSigner/seedsigner/tree/dev/enclosures"
+                    rel="noopener"
+                    >github.com/SeedSigner/seedsigner/tree/dev/enclosures</a
+                  >
+                </li>
+                <li>
+                  Accessing advanced webcam settings on Windows
+                  <a
+                    href="https://www.addictivetips.com/windows-tips/access-advanced-settings-for-the-integrated-webcam-on-windows-10/amp/"
+                    rel="noopener"
+                    >addictivetips.com</a
+                  >
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3>Testnet</h3>
+              <ul>
+                <li>
+                  Alternate public testnet Electrum servers
+                  <a
+                    href="https://1209k.com/bitcoin-eye/ele.php?chain=tbtc"
+                    rel="noopener"
+                    >1209k.com/bitcoin-eye</a
+                  >
+                </li>
+                <li>
+                  Testnet faucet
+                  <a href="https://bitcoinfaucet.uo1.net" rel="noopener"
+                    >bitcoinfaucet.uo1.net</a
+                  >
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3>Further reading cited by the guide</h3>
+              <ul>
+                <li>
+                  Michael Flaxman — 10x Bitcoin Security Guide
+                  <a href="https://btcguide.github.io/" rel="noopener"
+                    >btcguide.github.io</a
+                  >
+                </li>
+                <li>
+                  The Hitchhiker's Guide to Online Anonymity — source of the
+                  supply-chain threat graphic
+                  <a href="https://anonymousplanet.org/guide.html" rel="noopener"
+                    >anonymousplanet.org/guide.html</a
+                  >
+                </li>
+                <li>
+                  Jonathan Bier — <em>The Blocksize War: The battle for control
+                  over Bitcoin's protocol rules</em> (book, no link in the guide)
+                </li>
+                <li>
+                  bitaddress.org — the paper key pair generator behind the
+                  author's 2013–14 cold storage
+                  <a href="https://www.bitaddress.org/" rel="noopener"
+                    >bitaddress.org</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="col">
+        <div class="foot-grid">
+          <div>
+            <h3>What this page is</h3>
+            <p>
+              A single-page reading edition of the SeedSigner Independent
+              Custody Guide. The text has been re-sequenced and re-written for
+              continuous reading; the arguments, quotations, figures and
+              screenshots are the guide's own, and every chapter links back to
+              the corresponding section of the original.
+            </p>
+            <p>
+              This is not an official SeedSigner publication. For anything
+              authoritative — software releases, PGP verification instructions,
+              hardware compatibility, current testnet guidance — go to the
+              project repository.
+            </p>
+          </div>
+          <div>
+            <h3>Credit &amp; licence</h3>
+            <p>
+              The guide and all images are &copy; 2022 SeedSigner, released
+              under the MIT licence. That licence is what makes this edition
+              possible, and it travels with the content — the full notice is
+              included in this repository.
+            </p>
+            <p>
+              Thanks are owed to the guide's author and to Nick, Keith, and
+              everyone who has contributed to SeedSigner.
+            </p>
+          </div>
+          <div>
+            <h3>Read the original</h3>
+            <p>
+              <a
+                href="https://github.com/SeedSigner/independent_custody_guide"
+                rel="noopener"
+                >github.com/SeedSigner/independent_custody_guide</a
+              >
+            </p>
+            <p>
+              <a href="https://github.com/SeedSigner/seedsigner" rel="noopener"
+                >github.com/SeedSigner/seedsigner</a
+              >
+            </p>
+            <p>
+              <a href="https://seedsigner.com" rel="noopener">seedsigner.com</a>
+            </p>
+          </div>
+        </div>
+        <p class="colophon">
+          Set in Charter and the system monospace · no third-party fonts,
+          scripts, analytics or trackers are loaded by this page · 50 exhibits ·
+          nothing here is financial advice
+        </p>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
