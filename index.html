@@ -157,56 +157,6 @@
     </header>
 
     <main class="flow">
-      <!-- ============================================ editorial dateline -->
-
-      <aside class="dateline">
-        <div class="col">
-          <p class="label">Editor's note — not part of the guide</p>
-          <div class="dateline-body">
-            <p>
-              The guide is a living document, but this edition is a snapshot of
-              it, and the guide's own text dates from 2022. The reasoning below
-              has aged well; a few specifics have not. Before you follow any
-              step literally, check these against the project's current
-              releases:
-            </p>
-            <ul class="marks marks-dot">
-              <li>
-                <strong>The test network moved on.</strong> Chapter 08 uses
-                testnet3, which has since been superseded by testnet4. The
-                <code>-n testnet</code> flag, the server list and the faucet
-                link are reproduced as the guide has them — verify the current
-                flag and a working faucet in Sparrow's and SeedSigner's own docs
-                before relying on them.
-              </li>
-              <li>
-                <strong>SeedSigner has had many releases since.</strong> The
-                guide refers to version 0.4.5. There have been several major
-                versions and an interface redesign since — which is why some
-                screenshots here show an older UI than others. Menu wording and
-                the exact key sequences may differ from your device.
-              </li>
-              <li>
-                <strong>Hardware got scarcer, and prices went up.</strong> The
-                Pi Zero v1.3's scarcity is discussed in chapter 07. The dollar
-                figures inside the guide are 2022 prices — a bill of materials
-                of roughly $35, a display at $15 or less, a camera at $10 or
-                less — and they are left here exactly as the guide wrote them. A
-                build today runs closer to $70, which is the figure quoted at
-                the top of this page. Current recommended boards, cameras and
-                enclosures are best checked in the project repository rather
-                than here.
-              </li>
-            </ul>
-            <p>
-              Everything else — the threat modelling, the design reasoning, the
-              objections and the trade-offs — is the point of the document, and
-              none of it has expired.
-            </p>
-          </div>
-        </div>
-      </aside>
-
       <!-- ================================================ 01 epochs ==== -->
 
       <section class="chapter" id="ch01">
@@ -3150,6 +3100,28 @@
         </div>
       </section>
     </main>
+
+    <!-- ==================================================== outro ======== -->
+
+    <section class="outro" aria-labelledby="outro-h">
+      <div class="col">
+        <p class="label">One more thing</p>
+        <h2 id="outro-h">Reading it is one thing. Doing it is another.</h2>
+        <p>
+          Chapter 02 notes that depending on your situation, it may be worth
+          working through all of this with an “Uncle Jim” or a self-custody
+          coach — someone who can add context and answer questions as you go. If
+          you would rather that were an actual person than a concept, Become
+          Unruggable offers one-on-one help getting your self-custody set up.
+        </p>
+        <div class="outro-cta">
+          <a class="btn btn-key" href="https://beunruggable.com" rel="noopener"
+            >Get one-on-one support</a
+          >
+          <a class="btn" href="#top">Back to the top</a>
+        </div>
+      </div>
+    </section>
 
     <footer>
       <div class="col">

@@ -28,11 +28,22 @@ What it deliberately does **not** do:
 - Present itself as an official SeedSigner publication. The footer says so
   plainly, and points at the project repository for anything authoritative
   (software releases, PGP verification, hardware compatibility).
-- Add technical claims that aren't in the source. The two places where
-  present-day context is added are labelled `Editor's note — not from the
-  guide` so they can't be mistaken for the author's words.
+- Add technical claims that aren't in the source. The one place where
+  present-day context is added — a note in chapter 08 that the testnet commands
+  and faucet link have aged — is labelled `Editor's note — not from the guide`
+  so it can't be mistaken for the author's words.
+
+The closing call to action linking to beunruggable.com is the one piece of the
+page that isn't about the guide. It picks up the guide's own suggestion, in
+chapter 02, that some people should work through this with an "Uncle Jim" or a
+self-custody coach.
 
 If you publish this, keep the attribution and the licence file intact.
+
+> **A note on prices.** The hero quotes a bill of materials of ~$70, which is
+> what a build costs now. The figures inside the chapters — ~$35 total, a
+> display at $15 or less, a camera at $10 or less — are the guide's own 2022
+> numbers and are left exactly as written.
 
 ## Structure
 
